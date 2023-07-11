@@ -23,7 +23,7 @@ public class LinkedListDeque<T> {
         this.dummy = new Node();
         this.tail = new Node();
         this.dummy.nxt =  tail;
-        this.tail.nxt = dummy;
+        this.tail.pre = dummy;
     }
 
     public LinkedListDeque(T val) {
@@ -76,6 +76,7 @@ public class LinkedListDeque<T> {
         }
         this.size -= 1;
         T ret = dummy.nxt.val;
+        dummy.nxt.nxt.pre = dummy;
         dummy.nxt = dummy.nxt.nxt;
 
         return ret;
@@ -87,6 +88,7 @@ public class LinkedListDeque<T> {
         }
         this.size -= 1;
         T ret = tail.pre.val;
+        tail.pre.pre.nxt = tail;
         tail.pre = tail.pre.pre;
 
         return ret;
