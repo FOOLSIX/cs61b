@@ -26,14 +26,6 @@ public class LinkedListDeque<T> {
         this.tail.pre = dummy;
     }
 
-    public LinkedListDeque(T val) {
-        size = 1;
-        dummy = new Node();
-        tail = new Node();
-        Node node = new Node(val, dummy, tail);
-        tail.nxt = dummy;
-    }
-
     public boolean isEmpty() {
         return this.size == 0;
     }
