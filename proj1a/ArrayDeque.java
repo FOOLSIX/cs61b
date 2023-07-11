@@ -1,13 +1,15 @@
 public class ArrayDeque<T> {
-    T[] arr;
-    public int size;
-    public int volume;
+    private T[] arr;
+    private int size;
+    private int volume;
 
     private int nextFirst;
     private int nextLast;
 
     private static int factor = 2;
-    ArrayDeque() {
+    private final int minv = 16;
+    private final double loadfactor = 0.4;
+    public ArrayDeque() {
         size = 0;
         volume = 8;
         nextFirst = 3;
@@ -15,7 +17,7 @@ public class ArrayDeque<T> {
         arr = (T[]) new Object[8];
     }
 
-    private void resize(int sz){
+    private void resize(int sz) {
         int oldv = volume;
         volume = sz;
         T[] temp = (T[]) new Object[sz];
@@ -40,8 +42,7 @@ public class ArrayDeque<T> {
         arr[nextFirst] = item;
         if (nextFirst == 0) {
             nextFirst = volume - 1;
-        }
-        else {
+        } else {
             --nextFirst;
         }
     }
@@ -54,8 +55,7 @@ public class ArrayDeque<T> {
         arr[nextLast] = item;
         if (nextLast == volume - 1) {
             nextLast = 0;
-        }
-        else {
+        } else {
             ++nextLast;
         }
     }
@@ -69,7 +69,7 @@ public class ArrayDeque<T> {
     }
 
     public void printDeque() {
-        if(size == 0) {
+        if (size == 0) {
             return;
         }
         int i = nextFirst + 1;
@@ -100,7 +100,7 @@ public class ArrayDeque<T> {
 
         nextFirst = idx;
         T ret = arr[idx];
-        if (volume>16 && (double)size/volume <= 0.4) {
+        if (volume > minv && (double) size / volume <= loadfactor) {
             resize(volume / factor);
         }
 
@@ -119,7 +119,7 @@ public class ArrayDeque<T> {
         }
         nextLast = idx;
         T ret = arr[idx];
-        if (volume>16 && (double)size/volume <= 0.4) {
+        if (volume > minv && (double) size / volume <= loadfactor) {
             resize(volume / factor);
         }
 
@@ -127,10 +127,13 @@ public class ArrayDeque<T> {
     }
 
     public T get(int index) {
-        if(index < 0 || index >= size) {
+        if (index < 0 || index >= size) {
             return null;
         }
-
-        return arr[index];
+        int idx = nextFirst + 1 + index;
+        if (idx >= volume) {
+            idx -= volume;
+        }
+        return arr[idx];
     }
 }
