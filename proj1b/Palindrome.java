@@ -23,13 +23,13 @@ public class Palindrome {
     }
 
     public boolean isPalindrome(String word, CharacterComparator cc) {
-        if(word.length() <= 1) {
+        if (word.length() <= 1) {
             return true;
         }
 
         Deque<Character> d = wordToDeque(word);
-        while(d.size() >= 2) {
-            if(!cc.equalChars(d.removeFirst(), d.removeLast())) {
+        while (d.size() >= 2) {
+            if (!cc.equalChars(d.removeFirst(), d.removeLast())) {
                 return false;
             }
         }
