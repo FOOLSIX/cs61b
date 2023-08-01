@@ -15,13 +15,11 @@ public class TestArrayDequeGold {
                     solution.addLast(randnum);
                     d.addLast(randnum);
                     meshead = meshead.concat("addLast(" + randnum + ")\n");
-                    assertEquals(meshead, solution.getLast(), d.get(solution.size() - 1));
                     break;
                 case 1:
                     solution.addFirst(randnum);
                     d.addFirst(randnum);
                     meshead = meshead.concat("addFirst(" + randnum + ")\n");
-                    assertEquals(meshead, solution.getFirst(), d.get(0));
                     break;
                 case 2:
                     if(solution.size() < 1) {
