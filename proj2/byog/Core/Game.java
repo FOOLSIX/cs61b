@@ -18,7 +18,7 @@ public class Game {
 
     }
     public Game() {
-        ter.initialize(WIDTH, HEIGHT);
+        //ter.initialize(WIDTH, HEIGHT);
         t = new TETile[WIDTH][HEIGHT];
         //Init TETile
         for (int i = 0; i < WIDTH; ++i) {
@@ -76,11 +76,11 @@ public class Game {
 
     private void drawRectangle(int x, int y, int w, int h) {
         for (int i = 0; i <= w; ++i) {
-            if(!inValid(x + i, y)) {
+            if (!inValid(x + i, y)) {
                 break;
             }
             for (int j = 0; j <= h; ++j) {
-                if(inValid(x + i, y + j)) {
+                if (inValid(x + i, y + j)) {
                     t[x + i][y + j] = Tileset.FLOOR;
                 } else {
                     break;
@@ -187,7 +187,7 @@ public class Game {
 
         generateTile(seed);
         //tes
-        ter.renderFrame(t);
+        //ter.renderFrame(t);
         return t;
     }
 }
