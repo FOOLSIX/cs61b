@@ -17,8 +17,8 @@ public class Game {
         UP, RIGHT, DOWN, LEFT;
 
     }
-    Game() {
-        ter.initialize(WIDTH, HEIGHT);
+    public Game() {
+        //ter.initialize(WIDTH, HEIGHT);
         t = new TETile[WIDTH][HEIGHT];
         //Init TETile
         for (int i = 0; i < WIDTH; ++i) {
