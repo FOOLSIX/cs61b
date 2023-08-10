@@ -18,7 +18,7 @@ public class Game {
 
     }
     public Game() {
-        //ter.initialize(WIDTH, HEIGHT);
+        ter.initialize(WIDTH, HEIGHT);
         t = new TETile[WIDTH][HEIGHT];
         //Init TETile
         for (int i = 0; i < WIDTH; ++i) {
@@ -27,22 +27,24 @@ public class Game {
             }
         }
     }
-    private final int[][] nxt = {{0, 1}, {1, 0}, {0, -1}, {-1, 0},
-            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
+    private final int[][] nxt = {
+        {0, 1}, {1, 0}, {0, -1}, {-1, 0},
+        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
     private void exitGame() {
-        //TODO: save
+        //tod save
 
         System.exit(0);
     }
     private void loadGame() {
-        //TODO
+        //tod
     }
 
     private long strToSeed(String s) {
         int idx = 1;
         long ret = 0L;
-        while(s.charAt(idx) != 'S' && s.charAt(idx) != 's') {
-            ret = ret * 10 +(s.charAt(idx) - '0');
+        while (s.charAt(idx) != 'S' && s.charAt(idx) != 's') {
+            ret = ret * 10 + (s.charAt(idx) - '0');
             idx++;
         }
         return ret;
@@ -58,7 +60,7 @@ public class Game {
                 if (t[i][j] == Tileset.FLOOR) {
                     for (int k = 0; k < 8; ++k) {
                         int nx = i + nxt[k][0], ny = j + nxt[k][1];
-                        if(t[nx][ny] == Tileset.NOTHING) {
+                        if (t[nx][ny] == Tileset.NOTHING) {
                             t[nx][ny] = Tileset.WALL;
                         }
                     }
@@ -66,10 +68,30 @@ public class Game {
             }
         }
     }
+    boolean delectFloor() {
+        //tod
+
+        return false;
+    }
+
+    private void drawRectangle(int x, int y, int w, int h) {
+        for (int i = 0; i <= w; ++i) {
+            if(!inValid(x + i, y)) {
+                break;
+            }
+            for (int j = 0; j <= h; ++j) {
+                if(inValid(x + i, y + j)) {
+                    t[x + i][y + j] = Tileset.FLOOR;
+                } else {
+                    break;
+                }
+            }
+        }
+    }
     private void drawLine(int x, int y, int len, DIRECTION d) {
         int dir = d.ordinal();
         while (len-- >= 0) {
-            if(inValid(x, y)) {
+            if (inValid(x, y)) {
                 t[x][y] = Tileset.FLOOR;
             } else {
                 break;
@@ -82,12 +104,43 @@ public class Game {
     private void generateTile(long seed) {
         Random rand = new Random(seed);
         //a tes
-        for (int i = 0; i < 20; ++i) {
-            int x = RandomUtils.uniform(rand, 1, WIDTH - 1);
-            int y = RandomUtils.uniform(rand, 1, HEIGHT - 1);
-            int len = RandomUtils.uniform(rand, 3, 15);
-            DIRECTION d = DIRECTION.values()[RandomUtils.uniform(rand, 0, 4)];;
+        int x = 1;
+        int y = RandomUtils.uniform(rand, 1, HEIGHT - 1);
+        int dir = 2;
+        for (int i = 0; i < 30; ++i) {
+            int len = RandomUtils.uniform(rand, 3, 40);
+            DIRECTION d = DIRECTION.values()[dir];
             drawLine(x, y, len, d);
+            x += len * nxt[dir][0];
+            y += len * nxt[dir][1];
+            if (x >= WIDTH - 1) {
+                x = WIDTH - 2;
+            }
+            if (x <= 0) {
+                x = 0;
+            }
+            if (y >= HEIGHT - 1) {
+                y = HEIGHT - 2;
+            }
+            if (y <= 0) {
+                y = 0;
+            }
+            int nxtdir = RandomUtils.uniform(rand, 0, 4);
+            while (dir == nxtdir) {
+                nxtdir = RandomUtils.uniform(rand, 0, 4);
+            }
+            dir = nxtdir;
+        }
+        for (int i = 1; i < WIDTH - 1; ++i) {
+            for (int j = 1; j < HEIGHT - 1; ++j) {
+                if (t[i][j] == Tileset.FLOOR) {
+                    if (RandomUtils.uniform(rand, 0, 15) == 0) {
+                        int w = RandomUtils.uniform(rand, 0, 10);
+                        int h = RandomUtils.uniform(rand, 0, 10);
+                        drawRectangle(i, j, w, h);
+                    }
+                }
+            }
         }
         drawWall();
         return;
@@ -111,7 +164,7 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
+        //Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
         long seed = 0L;
@@ -123,16 +176,18 @@ public class Game {
             case 'Q':
             case 'q':
                 exitGame();
+                break;
             case 'L':
             case 'l':
                 loadGame();
+                break;
             default:
                 break;
         }
 
         generateTile(seed);
         //tes
-        //ter.renderFrame(t);
+        ter.renderFrame(t);
         return t;
     }
 }
