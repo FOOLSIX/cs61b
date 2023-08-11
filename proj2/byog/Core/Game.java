@@ -3,27 +3,93 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-
+import edu.princeton.cs.introcs.StdDraw;
+import java.awt.*;
+import java.io.*;
+import java.util.ListResourceBundle;
 import java.util.Random;
 
-public class Game {
-    TERenderer ter = new TERenderer();
+public class Game implements Serializable {
+
+    private boolean isloaded = false;
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-
-    private TETile[][] t;
+    private long seed;
+    private  Random rand;
     private enum DIRECTION {
         UP, RIGHT, DOWN, LEFT;
 
     }
+    public class BYoGPlayer implements Serializable {
+        private int x;
+        private int y;
+        boolean isValid;
+        public BYoGPlayer(int px, int py, boolean statue) {
+            x = px;
+            y = py;
+            isValid = statue;
+        }
+
+        public void setPos(TETile[][] t, int nx, int ny) {
+            if (isValid) {
+                t[x][y] = Tileset.FLOOR;
+            }
+            x = nx;
+            y = ny;
+            t[x][y] = Tileset.PLAYER;
+        }
+        public void loadInitPos(TETile[][] t) {
+            t[x][y] = Tileset.PLAYER;
+        }
+        public void playerMove(TETile[][] t, DIRECTION d) {
+            int dir = d.ordinal();
+            int nx = x + nxt[dir][0];
+            int ny = y + nxt[dir][1];
+            if (t[nx][ny] == Tileset.FLOOR) {
+                setPos(t, nx, ny);
+            }
+        }
+        public void fromKeyboardMove(TETile[][] t, char key) {
+            switch (key) {
+                case 'w':
+                case 'W':
+                    player.playerMove(t, DIRECTION.UP);
+                    break;
+                case 'd':
+                case 'D':
+                    player.playerMove(t, DIRECTION.RIGHT);
+                    break;
+                case 's':
+                case 'S':
+                    player.playerMove(t, DIRECTION.DOWN);
+                    break;
+                case 'a':
+                case 'A':
+                    player.playerMove(t, DIRECTION.LEFT);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private BYoGPlayer player;
     public Game() {
-        //ter.initialize(WIDTH, HEIGHT);
-        t = new TETile[WIDTH][HEIGHT];
-        //Init TETile
-        for (int i = 0; i < WIDTH; ++i) {
-            for (int j = 0; j < HEIGHT; ++j) {
-                t[i][j] = Tileset.NOTHING;
+        player = new BYoGPlayer(0, 0, false);
+    }
+    private void getPlayerPos(TETile[][] t) {
+        while (!player.isValid) {
+            for (int i = 1; i < WIDTH - 1; ++i) {
+                for (int j = 1; j < HEIGHT - 1; ++j) {
+                    if (t[i][j] == Tileset.FLOOR) {
+                        if (RandomUtils.uniform(rand, 0, 100) == 0) {
+                            player.setPos(t, i, j);
+                            player.isValid = true;
+                            return;
+                        }
+                    }
+                }
             }
         }
     }
@@ -31,13 +97,75 @@ public class Game {
         {0, 1}, {1, 0}, {0, -1}, {-1, 0},
         {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
     };
-    private void exitGame() {
-        //tod save
+    /**return true if launch a new game*/
+    private boolean menu() {
+        StdDraw.clear(Color.BLACK);
+        double midwidth = (double) WIDTH / 2;
+        double midheight = (double) HEIGHT / 2;
 
+        Font sFont = new Font("Monaco", Font.BOLD, 40);
+        StdDraw.setFont(sFont);
+        StdDraw.setPenColor(StdDraw.WHITE);
+        StdDraw.text(midwidth, midheight + 5, "CS61B");
+        sFont = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(sFont);
+        StdDraw.text(midwidth, midheight - 5, "(N) NEW GAME");
+        StdDraw.text(midwidth, midheight - 7, "(L) LOAD GAME");
+        StdDraw.text(midwidth, midheight - 9, "(Q) QUIT");
+        StdDraw.show();
+
+        char key;
+        while (true) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                StdDraw.pause(500);
+                continue;
+            }
+            key = StdDraw.nextKeyTyped();
+            switch (key) {
+                case 'n':
+                    return true;
+                case 'l':
+                    loadGame();
+                    return false;
+                case 'q':
+                    exitGame(false);
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+    }
+    private void saveGame() {
+        File f = new File("./savefile.txt");
+        try {
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(f);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(this);
+            os.close();
+        }  catch (FileNotFoundException e) {
+            System.out.println("file not found");
+            System.exit(0);
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(0);
+        }
+    }
+
+    private void exitGame(boolean needSave) {
+        if (needSave) {
+            saveGame();
+        }
         System.exit(0);
     }
-    private void loadGame() {
-        //tod
+    private TETile[][] loadGame() {
+        rand = new Random(seed);
+        TETile[][] t = generateWorld();
+        isloaded = true;
+        return t;
     }
 
     private long strToSeed(String s) {
@@ -54,7 +182,7 @@ public class Game {
         return (x > 0 && y > 0 && x < WIDTH - 1 && y < HEIGHT - 1);
     }
 
-    private void drawWall() {
+    private void drawWall(TETile[][] t) {
         for (int i = 1; i < WIDTH - 1; ++i) {
             for (int j = 1; j < HEIGHT - 1; ++j) {
                 if (t[i][j] == Tileset.FLOOR) {
@@ -68,13 +196,8 @@ public class Game {
             }
         }
     }
-    boolean delectFloor() {
-        //tod
 
-        return false;
-    }
-
-    private void drawRectangle(int x, int y, int w, int h) {
+    private void drawRectangle(TETile[][] t, int x, int y, int w, int h) {
         for (int i = 0; i <= w; ++i) {
             if (!inValid(x + i, y)) {
                 break;
@@ -88,7 +211,7 @@ public class Game {
             }
         }
     }
-    private void drawLine(int x, int y, int len, DIRECTION d) {
+    private void drawLine(TETile[][] t, int x, int y, int len, DIRECTION d) {
         int dir = d.ordinal();
         while (len-- >= 0) {
             if (inValid(x, y)) {
@@ -101,16 +224,44 @@ public class Game {
         }
     }
 
-    private void generateTile(long seed) {
-        Random rand = new Random(seed);
-        //a tes
+    private String inputSeed() {
+        char key;
+        StdDraw.clear(Color.BLACK);
+        StdDraw.setPenColor(Color.WHITE);
+        Font sFont = new Font("Monaco", Font.BOLD, 20);
+        StdDraw.setFont(sFont);
+        StdDraw.show();
+        key = ' ';
+        StringBuilder strseed = new StringBuilder();
+        while (key != 's') {
+            if (!StdDraw.hasNextKeyTyped()) {
+                StdDraw.pause(50);
+                continue;
+            }
+            key = StdDraw.nextKeyTyped();
+            strseed.append(String.valueOf(key));
+            StdDraw.clear(Color.BLACK);
+            StdDraw.text((double) WIDTH / 2, (double) HEIGHT / 2, strseed.toString());
+            StdDraw.show();
+        }
+        return strseed.toString();
+    }
+
+    private TETile[][] generateWorld() {
+        //Init
+        TETile[][] t = new TETile[WIDTH][HEIGHT];
+        for (int i = 0; i < WIDTH; ++i) {
+            for (int j = 0; j < HEIGHT; ++j) {
+                t[i][j] = Tileset.NOTHING;
+            }
+        }
         int x = 1;
         int y = RandomUtils.uniform(rand, 1, HEIGHT - 1);
-        int dir = 2;
+        int dir = 1;
         for (int i = 0; i < 30; ++i) {
             int len = RandomUtils.uniform(rand, 3, 40);
             DIRECTION d = DIRECTION.values()[dir];
-            drawLine(x, y, len, d);
+            drawLine(t, x, y, len, d);
             x += len * nxt[dir][0];
             y += len * nxt[dir][1];
             if (x >= WIDTH - 1) {
@@ -137,18 +288,56 @@ public class Game {
                     if (RandomUtils.uniform(rand, 0, 15) == 0) {
                         int w = RandomUtils.uniform(rand, 0, 10);
                         int h = RandomUtils.uniform(rand, 0, 10);
-                        drawRectangle(i, j, w, h);
+                        drawRectangle(t, i, j, w, h);
                     }
                 }
             }
         }
-        drawWall();
-        return;
+
+        drawWall(t);
+        if (!isloaded) {
+            player.isValid = false;
+            getPlayerPos(t);
+        }
+
+        return t;
     }
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        TERenderer ter = new TERenderer();
+        char key;
+        TETile[][] t;
+        ter.initialize(WIDTH, HEIGHT + 2);
+        if (menu()) {
+            seed = (strToSeed("N" + inputSeed() + "S"));
+            rand = new Random(seed);
+            isloaded = false;
+            t = generateWorld();
+        } else {
+            t = loadGame();
+        }
+
+        Font sFont = new Font("Monaco", Font.BOLD, 16);
+        StdDraw.setFont(sFont);
+        StdDraw.clear(Color.BLACK);
+        player.loadInitPos(t);
+        ter.renderFrame(t);
+
+        while (true) {
+            if (!StdDraw.hasNextKeyTyped()) {
+                StdDraw.pause(50);
+                continue;
+            }
+            key = StdDraw.nextKeyTyped();
+            player.fromKeyboardMove(t, key);
+            if (key == 'Q' || key == 'q') {
+                exitGame(true);
+            }
+            StdDraw.clear(Color.BLACK);
+            ter.renderFrame(t);
+        }
     }
 
     /**
@@ -167,25 +356,49 @@ public class Game {
         //Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        long seed = 0L;
+        TETile[][] t = null;
         switch (input.charAt(0)) {
             case 'N':
             case 'n':
                 seed = strToSeed(input);
+                rand = new Random(seed);
+                isloaded = false;
+                t = generateWorld();
                 break;
             case 'Q':
             case 'q':
-                exitGame();
+                exitGame(false);
                 break;
             case 'L':
             case 'l':
-                loadGame();
+                t = loadGame();
                 break;
             default:
                 break;
         }
-
-        generateTile(seed);
+        player.loadInitPos(t);
+        int len = input.length();
+        int idx;
+        if (!isloaded) {
+            idx = input.indexOf('S');
+            if (idx == -1) {
+                idx = input.indexOf('s');
+            }
+        } else {
+            idx = 0;
+        }
+        ++idx;
+        while (idx < len) {
+            switch (input.charAt(idx)) {
+                case 'Q':
+                case 'q':
+                    saveGame();
+                    return t;
+                default:
+                    player.fromKeyboardMove(t, input.charAt(idx));
+            }
+            ++idx;
+        }
         //tes
         //ter.renderFrame(t);
         return t;
