@@ -4,9 +4,14 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import java.awt.*;
-import java.io.*;
-import java.util.ListResourceBundle;
+import java.awt.Font;
+import java.awt.Color;
+import java.io.File;
+import java.io.Serializable;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 public class Game implements Serializable {
@@ -93,10 +98,7 @@ public class Game implements Serializable {
             }
         }
     }
-    private final int[][] nxt = {
-        {0, 1}, {1, 0}, {0, -1}, {-1, 0},
-        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
-    };
+    private final int[][] nxt = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     /**return true if launch a new game*/
     private boolean menu() {
         StdDraw.clear(Color.BLACK);
@@ -163,8 +165,9 @@ public class Game implements Serializable {
     }
     private TETile[][] loadGame() {
         rand = new Random(seed);
-        TETile[][] t = generateWorld();
         isloaded = true;
+        TETile[][] t = generateWorld();
+
         return t;
     }
 
