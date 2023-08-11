@@ -2,7 +2,8 @@ package byog.Core;
 
 import java.io.Serializable;
 /**
- * 不要试图存储复杂类
+ * 不要存储复杂的类
+ * 比如TETile, 整个Game
  * 自动评测机大概率出错(c001)
  **/
 public class SaveData implements Serializable {
