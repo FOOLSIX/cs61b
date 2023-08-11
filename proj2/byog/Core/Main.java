@@ -4,7 +4,6 @@ import byog.TileEngine.TETile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 import java.io.IOException;
 
@@ -34,8 +33,8 @@ public class Main {
         }
     }
     private static Game loadworld() {
-        File f = new File("./savefile.txt");
-        if (f.exists()) {
+        File f = new File("savefile.txt");
+        if (f.exists()){
             try {
                 FileInputStream fs = new FileInputStream(f);
                 ObjectInputStream os = new ObjectInputStream(fs);

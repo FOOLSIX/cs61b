@@ -9,7 +9,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.Serializable;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.util.Random;
@@ -85,7 +84,7 @@ public class Game implements Serializable {
         player = new BYoGPlayer(0, 0, false);
         t = new TETile[WIDTH][HEIGHT];
     }
-    private void getPlayerPos(TETile[][] t) {
+    private void getPlayerPos() {
         while (!player.isValid) {
             for (int i = 1; i < WIDTH - 1; ++i) {
                 for (int j = 1; j < HEIGHT - 1; ++j) {
@@ -144,7 +143,7 @@ public class Game implements Serializable {
         }
     }
     private void saveGame() {
-        File f = new File("./savefile.txt");
+        File f = new File("savefile.txt");
         try {
             if (!f.exists()) {
                 f.createNewFile();
@@ -153,11 +152,7 @@ public class Game implements Serializable {
             ObjectOutputStream os = new ObjectOutputStream(fs);
             os.writeObject(this);
             os.close();
-        }  catch (FileNotFoundException e) {
-            System.out.println("file not found");
-            System.exit(0);
-        } catch (IOException e) {
-            System.out.println(e);
+        }  catch (IOException e) {
             System.exit(0);
         }
     }
@@ -169,6 +164,9 @@ public class Game implements Serializable {
         System.exit(0);
     }
     private void loadGame() {
+        if (rand == null) {
+            exitGame(false);
+        }
         isloaded = true;
     }
 
@@ -186,7 +184,7 @@ public class Game implements Serializable {
         return (x > 0 && y > 0 && x < WIDTH - 1 && y < HEIGHT - 1);
     }
 
-    private void drawWall(TETile[][] t) {
+    private void drawWall() {
         for (int i = 1; i < WIDTH - 1; ++i) {
             for (int j = 1; j < HEIGHT - 1; ++j) {
                 if (t[i][j] == Tileset.FLOOR) {
@@ -201,7 +199,7 @@ public class Game implements Serializable {
         }
     }
 
-    private void drawRectangle(TETile[][] t, int x, int y, int w, int h) {
+    private void drawRectangle(int x, int y, int w, int h) {
         for (int i = 0; i <= w; ++i) {
             if (!inValid(x + i, y)) {
                 break;
@@ -215,7 +213,7 @@ public class Game implements Serializable {
             }
         }
     }
-    private void drawLine(TETile[][] t, int x, int y, int len, DIRECTION d) {
+    private void drawLine(int x, int y, int len, DIRECTION d) {
         int dir = d.ordinal();
         while (len-- >= 0) {
             if (inValid(x, y)) {
@@ -251,21 +249,22 @@ public class Game implements Serializable {
         return strseed.toString();
     }
 
-    private TETile[][] generateWorld() {
+    private void generateWorld() {
         //Init
-        TETile[][] t = new TETile[WIDTH][HEIGHT];
+        t = new TETile[WIDTH][HEIGHT];
         for (int i = 0; i < WIDTH; ++i) {
             for (int j = 0; j < HEIGHT; ++j) {
                 t[i][j] = Tileset.NOTHING;
             }
         }
+
         int x = 1;
         int y = RandomUtils.uniform(rand, 1, HEIGHT - 1);
         int dir = 1;
         for (int i = 0; i < 30; ++i) {
             int len = RandomUtils.uniform(rand, 3, 40);
             DIRECTION d = DIRECTION.values()[dir];
-            drawLine(t, x, y, len, d);
+            drawLine(x, y, len, d);
             x += len * nxt[dir][0];
             y += len * nxt[dir][1];
             if (x >= WIDTH - 1) {
@@ -292,19 +291,18 @@ public class Game implements Serializable {
                     if (RandomUtils.uniform(rand, 0, 15) == 0) {
                         int w = RandomUtils.uniform(rand, 0, 10);
                         int h = RandomUtils.uniform(rand, 0, 10);
-                        drawRectangle(t, i, j, w, h);
+                        drawRectangle(i, j, w, h);
                     }
                 }
             }
         }
 
-        drawWall(t);
+        drawWall();
         if (!isloaded) {
             player.isValid = false;
-            getPlayerPos(t);
+            getPlayerPos();
         }
 
-        return t;
     }
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -317,7 +315,7 @@ public class Game implements Serializable {
             seed = (strToSeed("N" + inputSeed() + "S"));
             rand = new Random(seed);
             isloaded = false;
-            t = generateWorld();
+            generateWorld();
         } else {
             loadGame();
         }
@@ -367,7 +365,7 @@ public class Game implements Serializable {
                 seed = strToSeed(input);
                 rand = new Random(seed);
                 isloaded = false;
-                t = generateWorld();
+                generateWorld();
                 break;
             case 'Q':
             case 'q':
