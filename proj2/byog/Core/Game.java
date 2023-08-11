@@ -1,343 +1,83 @@
 package byog.Core;
 
+import java.awt.Color;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import java.awt.Font;
-import java.awt.Color;
-import java.io.Serializable;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.IOException;
-import java.util.Random;
 
-public class Game implements Serializable {
 
-    private boolean isloaded = false;
+public class Game {
+    TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
-    private long seed;
-    private  Random rand;
-    private enum DIRECTION {
-        UP, RIGHT, DOWN, LEFT;
+    public static final int WIDTH = 90;
+    public static final int HEIGHT = 46;
 
-    }
-    private TETile[][] t;
-    public class BYoGPlayer implements Serializable {
-        private int x;
-        private int y;
-        boolean isValid;
-        public BYoGPlayer(int px, int py, boolean statue) {
-            x = px;
-            y = py;
-            isValid = statue;
-        }
+    long seed;
+    int[][] playerdoor = new int[2][2];
+    int saveFlage = 0;
+    int isLSavedGame = 0;
 
-        public void setPos(int nx, int ny) {
-            if (isValid) {
-                t[x][y] = Tileset.FLOOR;
-            }
-            x = nx;
-            y = ny;
-            t[x][y] = Tileset.PLAYER;
-        }
-        public void loadPos() {
-            t[x][y] = Tileset.PLAYER;
-        }
-        public void playerMove(DIRECTION d) {
-            int dir = d.ordinal();
-            int nx = x + nxt[dir][0];
-            int ny = y + nxt[dir][1];
-            if (t[nx][ny].character() == Tileset.FLOOR.character()) {
-                setPos(nx, ny);
-            }
-        }
-        public void fromKeyboardMove(char key) {
-            switch (key) {
-                case 'w':
-                case 'W':
-                    player.playerMove(DIRECTION.UP);
-                    break;
-                case 'd':
-                case 'D':
-                    player.playerMove(DIRECTION.RIGHT);
-                    break;
-                case 's':
-                case 'S':
-                    player.playerMove(DIRECTION.DOWN);
-                    break;
-                case 'a':
-                case 'A':
-                    player.playerMove(DIRECTION.LEFT);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
 
-    private BYoGPlayer player;
+    TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+
+
     public Game() {
-        player = new BYoGPlayer(0, 0, false);
-        t = new TETile[WIDTH][HEIGHT];
-    }
-    private void getPlayerPos() {
-        while (!player.isValid) {
-            for (int i = 1; i < WIDTH - 1; ++i) {
-                for (int j = 1; j < HEIGHT - 1; ++j) {
-                    if (t[i][j] == Tileset.FLOOR) {
-                        if (RandomUtils.uniform(rand, 0, 100) == 0) {
-                            player.setPos(i, j);
-                            player.isValid = true;
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    private final int[][] nxt = {
-            {0, 1}, {1, 0}, {0, -1}, {-1, 0},
-            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
-    };
-    /**return true if launch a new game*/
-    private boolean menu() {
-        StdDraw.clear(Color.BLACK);
-        double midwidth = (double) WIDTH / 2;
-        double midheight = (double) HEIGHT / 2;
-
-        Font sFont = new Font("Monaco", Font.BOLD, 40);
-        StdDraw.setFont(sFont);
-        StdDraw.setPenColor(StdDraw.WHITE);
-        StdDraw.text(midwidth, midheight + 5, "CS61B");
-        sFont = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.setFont(sFont);
-        StdDraw.text(midwidth, midheight - 5, "(N) NEW GAME");
-        StdDraw.text(midwidth, midheight - 7, "(L) LOAD GAME");
-        StdDraw.text(midwidth, midheight - 9, "(Q) QUIT");
-        StdDraw.show();
-
-        char key;
-        while (true) {
-            if (!StdDraw.hasNextKeyTyped()) {
-                StdDraw.pause(500);
-                continue;
-            }
-            key = StdDraw.nextKeyTyped();
-            switch (key) {
-                case 'n':
-                    return true;
-                case 'l':
-                    loadGame();
-                    return false;
-                case 'q':
-                    exitGame(false);
-                    break;
-                default:
-                    break;
-            }
-            
-        }
-    }
-    private void saveGame() {
-        try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("./saved.txt"));
-            os.writeObject(this);
-            os.close();
-        }  catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    private void exitGame(boolean needSave) {
-        if (needSave) {
-            saveGame();
-        }
-        System.exit(0);
-    }
-    private void loadGame() {
-        isloaded = true;
-        if (rand == null) {
-            seed = 3415218040718096461L;
-            rand = new Random(3415218040718096461L);
-            generateWorld();
-            player = new BYoGPlayer(14, 24, true);
-        }
-
-    }
-
-    private long strToSeed(String s) {
-        int idx = 1;
-        long ret = 0L;
-        while (s.charAt(idx) != 'S' && s.charAt(idx) != 's') {
-            ret = ret * 10 + (s.charAt(idx) - '0');
-            idx++;
-        }
-        return ret;
-    }
-
-    private boolean inValid(int x, int y) {
-        return (x > 0 && y > 0 && x < WIDTH - 1 && y < HEIGHT - 1);
-    }
-
-    private void drawWall() {
-        for (int i = 1; i < WIDTH - 1; ++i) {
-            for (int j = 1; j < HEIGHT - 1; ++j) {
-                if (t[i][j] == Tileset.FLOOR) {
-                    for (int k = 0; k < 8; ++k) {
-                        int nx = i + nxt[k][0], ny = j + nxt[k][1];
-                        if (t[nx][ny] == Tileset.NOTHING) {
-                            t[nx][ny] = Tileset.WALL;
-                        }
-                    }
-                }
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                finalWorldFrame[x][y] = Tileset.NOTHING;
             }
         }
     }
 
-    private void drawRectangle(int x, int y, int w, int h) {
-        for (int i = 0; i <= w; ++i) {
-            if (!inValid(x + i, y)) {
-                break;
-            }
-            for (int j = 0; j <= h; ++j) {
-                if (inValid(x + i, y + j)) {
-                    t[x + i][y + j] = Tileset.FLOOR;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-    private void drawLine(int x, int y, int len, DIRECTION d) {
-        int dir = d.ordinal();
-        while (len-- >= 0) {
-            if (inValid(x, y)) {
-                t[x][y] = Tileset.FLOOR;
-            } else {
-                break;
-            }
-            x += nxt[dir][0];
-            y += nxt[dir][1];
-        }
-    }
 
-    private String inputSeed() {
-        char key;
-        StdDraw.clear(Color.BLACK);
-        StdDraw.setPenColor(Color.WHITE);
-        Font sFont = new Font("Monaco", Font.BOLD, 20);
-        StdDraw.setFont(sFont);
-        StdDraw.show();
-        key = ' ';
-        StringBuilder strseed = new StringBuilder();
-        while (key != 's') {
-            if (!StdDraw.hasNextKeyTyped()) {
-                StdDraw.pause(50);
-                continue;
-            }
-            key = StdDraw.nextKeyTyped();
-            strseed.append(String.valueOf(key));
-            StdDraw.clear(Color.BLACK);
-            StdDraw.text((double) WIDTH / 2, (double) HEIGHT / 2, strseed.toString());
-            StdDraw.show();
-        }
-        return strseed.toString();
-    }
-
-    private void generateWorld() {
-        //Init
-        t = new TETile[WIDTH][HEIGHT];
-        for (int i = 0; i < WIDTH; ++i) {
-            for (int j = 0; j < HEIGHT; ++j) {
-                t[i][j] = Tileset.NOTHING;
-            }
-        }
-
-        int x = 1;
-        int y = RandomUtils.uniform(rand, 1, HEIGHT - 1);
-        int dir = 1;
-        for (int i = 0; i < 30; ++i) {
-            int len = RandomUtils.uniform(rand, 3, 40);
-            DIRECTION d = DIRECTION.values()[dir];
-            drawLine(x, y, len, d);
-            x += len * nxt[dir][0];
-            y += len * nxt[dir][1];
-            if (x >= WIDTH - 1) {
-                x = WIDTH - 2;
-            }
-            if (x <= 0) {
-                x = 0;
-            }
-            if (y >= HEIGHT - 1) {
-                y = HEIGHT - 2;
-            }
-            if (y <= 0) {
-                y = 0;
-            }
-            int nxtdir = RandomUtils.uniform(rand, 0, 4);
-            while (dir == nxtdir) {
-                nxtdir = RandomUtils.uniform(rand, 0, 4);
-            }
-            dir = nxtdir;
-        }
-        for (int i = 1; i < WIDTH - 1; ++i) {
-            for (int j = 1; j < HEIGHT - 1; ++j) {
-                if (t[i][j] == Tileset.FLOOR) {
-                    if (RandomUtils.uniform(rand, 0, 15) == 0) {
-                        int w = RandomUtils.uniform(rand, 0, 10);
-                        int h = RandomUtils.uniform(rand, 0, 10);
-                        drawRectangle(i, j, w, h);
-                    }
-                }
-            }
-        }
-
-        drawWall();
-        if (!isloaded) {
-            player.isValid = false;
-            getPlayerPos();
-        }
-
-    }
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
-        TERenderer ter = new TERenderer();
-        char key;
-        ter.initialize(WIDTH, HEIGHT + 2);
-        if (menu()) {
-            seed = (strToSeed("N" + inputSeed() + "S"));
-            rand = new Random(seed);
-            isloaded = false;
-            generateWorld();
-        } else {
-            loadGame();
+        Menu menu = new Menu(WIDTH, HEIGHT);
+        menu.controlMenus();
+        switch (menu.lisentOnMenu()) {
+            case 2 :
+                run("L");
+                break;
+
+            case 3:
+                System.exit(0);
+                break;
+
+            case 1:
+                StdDraw.clear(Color.BLACK);
+                StdDraw.setPenColor(Color.WHITE);
+                StdDraw.text(WIDTH / 2, HEIGHT / 2, String.valueOf(""));
+                StdDraw.show();
+                StringBuilder str = new StringBuilder();
+                str.append(" ");
+                while (true) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        str.append(StdDraw.nextKeyTyped());
+                        StdDraw.clear(Color.BLACK);
+                        StdDraw.setPenColor(Color.WHITE);
+                        StdDraw.text(WIDTH / 2, HEIGHT / 2, String.valueOf(str));
+                        StdDraw.show();
+                    }
+                    char c = str.charAt(str.length() - 1);
+                    if (c == 'S' || c == 's') {
+                        break;
+                    }
+                }
+                run(String.valueOf(str));
+                break;
+            default:
+                break;
         }
 
-        Font sFont = new Font("Monaco", Font.BOLD, 16);
-        StdDraw.setFont(sFont);
-        StdDraw.clear(Color.BLACK);
-        player.loadPos();
-        ter.renderFrame(t);
 
-        while (true) {
-            if (!StdDraw.hasNextKeyTyped()) {
-                StdDraw.pause(50);
-                continue;
-            }
-            key = StdDraw.nextKeyTyped();
-            player.fromKeyboardMove(key);
-            if (key == 'Q' || key == 'q') {
-                exitGame(true);
-            }
-            StdDraw.clear(Color.BLACK);
-            ter.renderFrame(t);
-        }
     }
 
     /**
@@ -353,55 +93,127 @@ public class Game implements Serializable {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        //Fill out this method to run the game using the input passed in,
-        // and return a 2D tile representation of the world that would have been
-        // drawn if the same inputs had been given to playWithKeyboard().
-        //TERenderer ter = new TERenderer();
-        //ter.initialize(WIDTH, HEIGHT);
-        switch (input.charAt(0)) {
-            case 'N':
-            case 'n':
-                seed = strToSeed(input);
-                rand = new Random(seed);
-                isloaded = false;
-                generateWorld();
-                break;
-            case 'Q':
-            case 'q':
-                exitGame(false);
-                break;
-            case 'L':
-            case 'l':
-                loadGame();
-                break;
-            default:
-                break;
-        }
-        player.loadPos();
-        int len = input.length();
-        int idx;
-        if (!isloaded) {
-            idx = input.indexOf('S');
-            if (idx == -1) {
-                idx = input.indexOf('s');
-            }
+        input = initialize(input);
+        World world = new World(seed, WIDTH, HEIGHT);
+        world.world(finalWorldFrame);
+
+        if (isLSavedGame == 0) {
+            playerdoor = world.playDoor(finalWorldFrame);
         } else {
-            idx = 0;
+            finalWorldFrame[playerdoor[0][0]][playerdoor[0][1]] = Tileset.PLAYER;
+            finalWorldFrame[playerdoor[1][0]][playerdoor[1][1]] = Tileset.LOCKED_DOOR;
         }
-        ++idx;
-        while (idx < len) {
-            switch (input.charAt(idx)) {
-                case 'Q':
-                case 'q':
-                    saveGame();
-                    return t;
-                default:
-                    player.fromKeyboardMove(input.charAt(idx));
+
+
+        int[] altered = Movement.move(finalWorldFrame, playerdoor[0][0], playerdoor[0][1], input);
+
+        playerdoor[0][0] = altered[0];
+        playerdoor[0][1] = altered[1];
+
+        if (saveFlage == 1) {
+            save(playerdoor);
+        }
+
+
+
+
+        return finalWorldFrame;
+    }
+
+
+    // 序列化
+    public static void writeObj(SavedGame p) {
+        try {
+            FileOutputStream file = new FileOutputStream("../saved.txt");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(file);
+            objectOutputStream.writeObject(p);
+            objectOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 反序列化
+    public static SavedGame readObj() {
+        SavedGame p = null;
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(
+                    new FileInputStream("../saved.txt"));
+            try {
+                p = (SavedGame) objectInputStream.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
-            ++idx;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        //tes
-        //ter.renderFrame(t);
-        return t;
+        return p;
+    }
+
+
+    public String initialize(String input) {
+        if (input.contains("Q") || input.contains("q")) {
+            input = input.substring(0, input.length() - 2);
+            saveFlage = 1;
+        }
+        if (input.contains("l") || input.contains("L")) {
+            SavedGame saved = readObj();
+            seed = saved.savedseed;
+            playerdoor[0][0] = saved.x0;
+            playerdoor[0][1] = saved.y0;
+            playerdoor[1][0] = saved.xDoor;
+            playerdoor[1][1] = saved.yDoor;
+            isLSavedGame = 1;
+            input = input.substring(1); // 获得步骤指令
+        } else {
+            int index = input.indexOf("S");
+            String temp = input;
+            seed = Long.parseLong(temp.replaceAll("[^0-9]", ""));
+            input = input.substring(index + 1); //获得步骤指令
+        }
+        return input;
+    }
+
+    public char listen() {
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                return StdDraw.nextKeyTyped();
+            }
+        }
+    }
+
+
+    public void save(int[][] player) {
+        SavedGame save = new SavedGame();
+        save.x0 = player[0][0];
+        save.y0 = player[0][1];
+        save.xDoor = player[1][0];
+        save.yDoor = player[1][1];
+        save.savedseed = seed;
+        writeObj(save);
+    }
+
+    public void run(String s) {
+        playWithInputString(s);
+        while (true) {
+            char received = listen();
+            if (received == ':') {
+                char received2 = listen();
+                if (received2 == 'Q' || received2 == 'q') {
+                    save(playerdoor);
+                    System.exit(0);
+                    break;
+                }
+            } else {
+                int x = playerdoor[0][0];
+                int y = playerdoor[0][1];
+                int[] altered = Movement.move(finalWorldFrame, x, y, String.valueOf(received));
+                playerdoor[0][0] = altered[0];
+                playerdoor[0][1] = altered[1];
+                ter.renderFrame(finalWorldFrame);
+            }
+        }
+
     }
 }
+
