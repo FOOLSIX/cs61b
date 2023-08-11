@@ -400,7 +400,7 @@ public class Game implements Serializable {
             switch (input.charAt(idx)) {
                 case 'Q':
                 case 'q':
-                    exitGame(true);
+                    saveGame();
                     return t;
                 default:
                     player.fromKeyboardMove(t, input.charAt(idx));
