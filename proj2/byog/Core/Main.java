@@ -35,7 +35,6 @@ public class Main {
                 return loadWorld;
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
-                System.exit(1);
             }
         }
         return new Game();

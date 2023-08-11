@@ -160,10 +160,14 @@ public class Game implements Serializable {
         System.exit(0);
     }
     private void loadGame() {
-        if (rand == null) {
-            System.exit(1);
-        }
         isloaded = true;
+        if (rand == null) {
+            seed = 3415218040718096461L;
+            rand = new Random(3415218040718096461L);
+            generateWorld();
+            player = new BYoGPlayer(14, 24, true);
+        }
+
     }
 
     private long strToSeed(String s) {
