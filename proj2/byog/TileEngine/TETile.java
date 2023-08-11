@@ -22,7 +22,7 @@ import java.io.Serializable;
  * to make your TETile class mutable, if you prefer.
  */
 
-public class TETile implements Serializable {
+public class TETile {
     private final char character; // Do not rename character or the autograder will break.
     private final Color textColor;
     private final Color backgroundColor;
