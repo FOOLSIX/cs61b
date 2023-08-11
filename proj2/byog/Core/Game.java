@@ -143,17 +143,13 @@ public class Game implements Serializable {
         }
     }
     private void saveGame() {
-        File f = new File("savefile.txt");
         try {
-            if (!f.exists()) {
-                f.createNewFile();
-            }
-            FileOutputStream fs = new FileOutputStream(f);
-            ObjectOutputStream os = new ObjectOutputStream(fs);
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("savefile.txt"));
             os.writeObject(this);
             os.close();
         }  catch (IOException e) {
-            System.exit(0);
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -165,7 +161,7 @@ public class Game implements Serializable {
     }
     private void loadGame() {
         if (rand == null) {
-            exitGame(false);
+            System.exit(1);
         }
         isloaded = true;
     }

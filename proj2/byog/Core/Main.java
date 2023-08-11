@@ -19,33 +19,25 @@ public class Main {
             System.out.println("Can only have one argument - the input string");
             System.exit(0);
         } else if (args.length == 1) {
-            if (game == null) {
-                game = new Game();
-            }
             TETile[][] worldState = game.playWithInputString(args[0]);
             System.out.println(TETile.toString(worldState));
         } else {
-            if (game == null) {
-                game = new Game();
-            }
             game.playWithKeyboard();
-
         }
     }
     private static Game loadworld() {
         File f = new File("savefile.txt");
         if (f.exists()){
             try {
-                FileInputStream fs = new FileInputStream(f);
-                ObjectInputStream os = new ObjectInputStream(fs);
+                ObjectInputStream os = new ObjectInputStream(new FileInputStream("savefile.txt"));
                 Game loadWorld = (Game) os.readObject();
                 os.close();
                 return loadWorld;
             } catch (ClassNotFoundException | IOException e) {
-                System.exit(0);
+                e.printStackTrace();
+                System.exit(1);
             }
         }
-
         return new Game();
     }
 }
