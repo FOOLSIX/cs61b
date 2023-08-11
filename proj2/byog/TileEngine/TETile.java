@@ -7,6 +7,7 @@ import java.util.Random;
 import edu.princeton.cs.introcs.StdDraw;
 import byog.Core.RandomUtils;
 
+import java.io.Serializable;
 /**
  * The TETile object is used to represent a single tile in your game. A 2D array of tiles make up a
  * board, and can be drawn to the screen using the TERenderer class.
@@ -21,7 +22,7 @@ import byog.Core.RandomUtils;
  * to make your TETile class mutable, if you prefer.
  */
 
-public class TETile {
+public class TETile implements Serializable {
     private final char character; // Do not rename character or the autograder will break.
     private final Color textColor;
     private final Color backgroundColor;

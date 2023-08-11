@@ -42,14 +42,7 @@ public class Main {
                 Game loadWorld = (Game) os.readObject();
                 os.close();
                 return loadWorld;
-            } catch (FileNotFoundException e) {
-                System.out.println("file not found");
-                System.exit(0);
-            } catch (IOException e) {
-                System.out.println(e);
-                System.exit(0);
-            } catch (ClassNotFoundException e) {
-                System.out.println("class not found");
+            } catch (ClassNotFoundException | IOException e) {
                 System.exit(0);
             }
         }

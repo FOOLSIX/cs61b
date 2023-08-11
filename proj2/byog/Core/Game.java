@@ -26,6 +26,7 @@ public class Game implements Serializable {
         UP, RIGHT, DOWN, LEFT;
 
     }
+    private TETile[][] t;
     public class BYoGPlayer implements Serializable {
         private int x;
         private int y;
@@ -36,7 +37,7 @@ public class Game implements Serializable {
             isValid = statue;
         }
 
-        public void setPos(TETile[][] t, int nx, int ny) {
+        public void setPos(int nx, int ny) {
             if (isValid) {
                 t[x][y] = Tileset.FLOOR;
             }
@@ -44,34 +45,34 @@ public class Game implements Serializable {
             y = ny;
             t[x][y] = Tileset.PLAYER;
         }
-        public void loadInitPos(TETile[][] t) {
+        public void loadPos() {
             t[x][y] = Tileset.PLAYER;
         }
-        public void playerMove(TETile[][] t, DIRECTION d) {
+        public void playerMove(DIRECTION d) {
             int dir = d.ordinal();
             int nx = x + nxt[dir][0];
             int ny = y + nxt[dir][1];
-            if (t[nx][ny] == Tileset.FLOOR) {
-                setPos(t, nx, ny);
+            if (t[nx][ny].character() == Tileset.FLOOR.character()) {
+                setPos(nx, ny);
             }
         }
-        public void fromKeyboardMove(TETile[][] t, char key) {
+        public void fromKeyboardMove(char key) {
             switch (key) {
                 case 'w':
                 case 'W':
-                    player.playerMove(t, DIRECTION.UP);
+                    player.playerMove(DIRECTION.UP);
                     break;
                 case 'd':
                 case 'D':
-                    player.playerMove(t, DIRECTION.RIGHT);
+                    player.playerMove(DIRECTION.RIGHT);
                     break;
                 case 's':
                 case 'S':
-                    player.playerMove(t, DIRECTION.DOWN);
+                    player.playerMove(DIRECTION.DOWN);
                     break;
                 case 'a':
                 case 'A':
-                    player.playerMove(t, DIRECTION.LEFT);
+                    player.playerMove(DIRECTION.LEFT);
                     break;
                 default:
                     break;
@@ -82,6 +83,7 @@ public class Game implements Serializable {
     private BYoGPlayer player;
     public Game() {
         player = new BYoGPlayer(0, 0, false);
+        t = new TETile[WIDTH][HEIGHT];
     }
     private void getPlayerPos(TETile[][] t) {
         while (!player.isValid) {
@@ -89,7 +91,7 @@ public class Game implements Serializable {
                 for (int j = 1; j < HEIGHT - 1; ++j) {
                     if (t[i][j] == Tileset.FLOOR) {
                         if (RandomUtils.uniform(rand, 0, 100) == 0) {
-                            player.setPos(t, i, j);
+                            player.setPos(i, j);
                             player.isValid = true;
                             return;
                         }
@@ -166,12 +168,8 @@ public class Game implements Serializable {
         }
         System.exit(0);
     }
-    private TETile[][] loadGame() {
-        rand = new Random(seed);
+    private void loadGame() {
         isloaded = true;
-        TETile[][] t = generateWorld();
-
-        return t;
     }
 
     private long strToSeed(String s) {
@@ -314,7 +312,6 @@ public class Game implements Serializable {
     public void playWithKeyboard() {
         TERenderer ter = new TERenderer();
         char key;
-        TETile[][] t;
         ter.initialize(WIDTH, HEIGHT + 2);
         if (menu()) {
             seed = (strToSeed("N" + inputSeed() + "S"));
@@ -322,13 +319,13 @@ public class Game implements Serializable {
             isloaded = false;
             t = generateWorld();
         } else {
-            t = loadGame();
+            loadGame();
         }
 
         Font sFont = new Font("Monaco", Font.BOLD, 16);
         StdDraw.setFont(sFont);
         StdDraw.clear(Color.BLACK);
-        player.loadInitPos(t);
+        player.loadPos();
         ter.renderFrame(t);
 
         while (true) {
@@ -337,7 +334,7 @@ public class Game implements Serializable {
                 continue;
             }
             key = StdDraw.nextKeyTyped();
-            player.fromKeyboardMove(t, key);
+            player.fromKeyboardMove(key);
             if (key == 'Q' || key == 'q') {
                 exitGame(true);
             }
@@ -364,7 +361,6 @@ public class Game implements Serializable {
         // drawn if the same inputs had been given to playWithKeyboard().
         //TERenderer ter = new TERenderer();
         //ter.initialize(WIDTH, HEIGHT);
-        TETile[][] t = null;
         switch (input.charAt(0)) {
             case 'N':
             case 'n':
@@ -379,12 +375,12 @@ public class Game implements Serializable {
                 break;
             case 'L':
             case 'l':
-                t = loadGame();
+                loadGame();
                 break;
             default:
                 break;
         }
-        player.loadInitPos(t);
+        player.loadPos();
         int len = input.length();
         int idx;
         if (!isloaded) {
@@ -403,7 +399,7 @@ public class Game implements Serializable {
                     saveGame();
                     return t;
                 default:
-                    player.fromKeyboardMove(t, input.charAt(idx));
+                    player.fromKeyboardMove(input.charAt(idx));
             }
             ++idx;
         }
