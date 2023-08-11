@@ -4,8 +4,8 @@ import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
 public class BYoGPlayer {
-    public int x;
-    public int y;
+    int x;
+    int y;
     boolean isValid;
     public BYoGPlayer(int px, int py, boolean statue) {
         x = px;
@@ -13,7 +13,7 @@ public class BYoGPlayer {
         isValid = statue;
     }
 
-     public void setPos(TETile[][] t, int nx, int ny) {
+    public void setPos(TETile[][] t, int nx, int ny) {
         if (isValid) {
             t[x][y] = Tileset.FLOOR;
         }
@@ -26,8 +26,8 @@ public class BYoGPlayer {
     }
     public void playerMove(TETile[][] t, Game.DIRECTION d) {
         int dir = d.ordinal();
-        int nx = x + Game.nxt[dir][0];
-        int ny = y + Game.nxt[dir][1];
+        int nx = x + Game.NXT[dir][0];
+        int ny = y + Game.NXT[dir][1];
         if (t[nx][ny].character() == Tileset.FLOOR.character()) {
             setPos(t, nx, ny);
         }

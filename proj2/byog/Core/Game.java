@@ -6,10 +6,14 @@ import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.Font;
 import java.awt.Color;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
-public class Game implements Serializable {
+public class Game {
 
     private boolean isloaded = false;
     /* Feel free to change the width and height. */
@@ -41,7 +45,7 @@ public class Game implements Serializable {
             }
         }
     }
-    static final int[][] nxt = {
+    static final int[][] NXT = {
             {0, 1}, {1, 0}, {0, -1}, {-1, 0},
             {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
     };
@@ -138,7 +142,7 @@ public class Game implements Serializable {
             for (int j = 1; j < HEIGHT - 1; ++j) {
                 if (t[i][j] == Tileset.FLOOR) {
                     for (int k = 0; k < 8; ++k) {
-                        int nx = i + nxt[k][0], ny = j + nxt[k][1];
+                        int nx = i + NXT[k][0], ny = j + NXT[k][1];
                         if (t[nx][ny] == Tileset.NOTHING) {
                             t[nx][ny] = Tileset.WALL;
                         }
@@ -170,8 +174,8 @@ public class Game implements Serializable {
             } else {
                 break;
             }
-            x += nxt[dir][0];
-            y += nxt[dir][1];
+            x += NXT[dir][0];
+            y += NXT[dir][1];
         }
     }
 
@@ -215,8 +219,8 @@ public class Game implements Serializable {
             int len = RandomUtils.uniform(rand, 3, 40);
             DIRECTION d = DIRECTION.values()[dir];
             drawLine(x, y, len, d);
-            x += len * nxt[dir][0];
-            y += len * nxt[dir][1];
+            x += len * NXT[dir][0];
+            y += len * NXT[dir][1];
             if (x >= WIDTH - 1) {
                 x = WIDTH - 2;
             }
