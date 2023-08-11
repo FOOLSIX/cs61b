@@ -6,7 +6,6 @@ import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.Font;
 import java.awt.Color;
-import java.io.File;
 import java.io.Serializable;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -144,7 +143,7 @@ public class Game implements Serializable {
     }
     private void saveGame() {
         try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("savefile.txt"));
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream("./saved.txt"));
             os.writeObject(this);
             os.close();
         }  catch (IOException e) {
