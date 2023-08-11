@@ -98,7 +98,10 @@ public class Game implements Serializable {
             }
         }
     }
-    private final int[][] nxt = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    private final int[][] nxt = {
+            {0, 1}, {1, 0}, {0, -1}, {-1, 0},
+            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
     /**return true if launch a new game*/
     private boolean menu() {
         StdDraw.clear(Color.BLACK);
