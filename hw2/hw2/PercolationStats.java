@@ -6,10 +6,10 @@ public class PercolationStats {
     private Percolation tes;
     private int T;
     private  int N;
-    PercolationFactory pf;
+    private PercolationFactory pf;
     private double u;
-    private double chiSquared;
-    double[] x;
+    private double standardDeviation;
+    private double[] x;
     /** perform T independent experiments on an N-by-N grid
      *
      */
@@ -33,6 +33,10 @@ public class PercolationStats {
         u = sum / T;
     }
     public PercolationStats(int N, int T, PercolationFactory pf) {
+        if (N <= 0 || T <= 0) {
+            throw new IllegalArgumentException();
+        }
+
         this.N = N;
         this.T = T;
         this.pf = pf;
@@ -42,7 +46,7 @@ public class PercolationStats {
         for (int i = 0; i < T; ++i) {
             s += (x[i] - u) * (x[i] - u);
         }
-        chiSquared = s / (T - 1);
+        standardDeviation = Math.sqrt(s / (T - 1));
     }
 
     /** sample mean of percolation threshold
@@ -59,17 +63,17 @@ public class PercolationStats {
         if (T == 1) {
             return Double.NaN;
         }
-        return chiSquared;
+        return standardDeviation;
     }
 
     /** low endpoint of 95% confidence interval
      *
      */
     public double confidenceLow()  {
-        return (u - 1.96 * Math.sqrt(chiSquared) / Math.sqrt(T));
+        return (u - 1.96 * standardDeviation / Math.sqrt(T));
     }
 
     public double confidenceHigh() {
-        return (u + 1.96 * Math.sqrt(chiSquared) / Math.sqrt(T));
+        return (u + 1.96 * standardDeviation / Math.sqrt(T));
     }
 }

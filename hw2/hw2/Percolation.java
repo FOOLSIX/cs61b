@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private final WeightedQuickUnionUF PERCOLATION_UNION;
     private final int VIRTUAL_TOP;
-    private final int VIRTUAL_BOTTOM;
+    private boolean isPercolates = false;
     private final int[][] NEAR = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     private int numOfOpenSites = 0;
     private boolean[][] g;
@@ -16,14 +16,12 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
 
-        PERCOLATION_UNION = new WeightedQuickUnionUF(N * N + 2);
+        PERCOLATION_UNION = new WeightedQuickUnionUF(N * N + 1);
         VIRTUAL_TOP = N * N;
-        VIRTUAL_BOTTOM = N * N + 1;
         g = new boolean[N][N];
         this.N = N;
         for (int i = 0; i < N; ++i) {
             PERCOLATION_UNION.union(VIRTUAL_TOP, i);
-            PERCOLATION_UNION.union(VIRTUAL_BOTTOM, i + N * (N - 1));
         }
     }
     private boolean validPos(int row, int col) {
@@ -61,7 +59,11 @@ public class Percolation {
             throw new IndexOutOfBoundsException();
         }
 
-        return (g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col));
+        boolean full = g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col);
+        if (full && row == N - 1) {
+            isPercolates = true;
+        }
+        return full;
     }
 
     /** number of open sites
@@ -73,6 +75,8 @@ public class Percolation {
     /** does the system percolate?
      */
     public boolean percolates() {
-        return PERCOLATION_UNION.connected(VIRTUAL_BOTTOM, VIRTUAL_TOP);
+        return isPercolates;
+    }
+    public static void main(String[] args) {
     }
 }
