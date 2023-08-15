@@ -46,6 +46,9 @@ public class Percolation {
                 PERCOLATION_UNION.union(nx * N + ny, row * N + col);
             }
         }
+        if (row == N - 1 && validPos(row - 1, col) && isFull(row - 1, col)) {
+            isPercolates = true;
+        }
     }
     public boolean isOpen(int row, int col) {
         if (!validPos(row, col)) {
@@ -59,11 +62,7 @@ public class Percolation {
             throw new IndexOutOfBoundsException();
         }
 
-        boolean full = g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col);
-        if (full && row == N - 1) {
-            isPercolates = true;
-        }
-        return full;
+        return g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col);
     }
 
     /** number of open sites
@@ -75,7 +74,17 @@ public class Percolation {
     /** does the system percolate?
      */
     public boolean percolates() {
-        return isPercolates;
+        if (isPercolates) {
+            return isPercolates;
+        }
+        for (int i = 0; i < N; ++i) {
+            if (isFull(N - 1, i)) {
+                isPercolates = true;
+                return true;
+            }
+        }
+
+        return false;
     }
     public static void main(String[] args) {
     }
