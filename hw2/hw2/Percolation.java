@@ -4,7 +4,9 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private final WeightedQuickUnionUF PERCOLATION_UNION;
+    private final WeightedQuickUnionUF PERCOLATION_UNION_B;
     private final int VIRTUAL_TOP;
+    private final int VIRTUAL_BOTTOM;
     private boolean isPercolates = false;
     private final int[][] NEAR = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     private int numOfOpenSites = 0;
@@ -16,12 +18,15 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
 
-        PERCOLATION_UNION = new WeightedQuickUnionUF(N * N + 1);
+        PERCOLATION_UNION = new WeightedQuickUnionUF(N * N + 2);
+        PERCOLATION_UNION_B = new WeightedQuickUnionUF(N * N + 2);
         VIRTUAL_TOP = N * N;
+        VIRTUAL_BOTTOM = N * N + 1;
         g = new boolean[N][N];
         this.N = N;
         for (int i = 0; i < N; ++i) {
             PERCOLATION_UNION.union(VIRTUAL_TOP, i);
+            PERCOLATION_UNION_B.union(VIRTUAL_TOP, i);
         }
     }
     private boolean validPos(int row, int col) {
@@ -36,6 +41,9 @@ public class Percolation {
         if (g[row][col]) {
             return;
         }
+        if (row == N - 1) {
+            PERCOLATION_UNION.union(VIRTUAL_BOTTOM, row * N + col);
+        }
 
         g[row][col] = true;
         ++numOfOpenSites;
@@ -44,12 +52,15 @@ public class Percolation {
             int ny = col + NEAR[i][1];
             if (validPos(nx, ny) && g[nx][ny]) {
                 PERCOLATION_UNION.union(nx * N + ny, row * N + col);
+                PERCOLATION_UNION_B.union(nx * N + ny, row * N + col);
             }
         }
-        if (row == N - 1 && validPos(row - 1, col) && isFull(row - 1, col)) {
+        if (!isPercolates && PERCOLATION_UNION.connected(VIRTUAL_TOP, VIRTUAL_BOTTOM)) {
             isPercolates = true;
         }
+
     }
+
     public boolean isOpen(int row, int col) {
         if (!validPos(row, col)) {
             throw new IndexOutOfBoundsException();
@@ -57,9 +68,13 @@ public class Percolation {
 
         return g[row][col];
     }
+
     public boolean isFull(int row, int col) {
         if (!validPos(row, col)) {
             throw new IndexOutOfBoundsException();
+        }
+        if (isPercolates) {
+            return g[row][col] && PERCOLATION_UNION_B.connected(VIRTUAL_TOP, row * N + col);
         }
 
         return g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col);
@@ -74,17 +89,7 @@ public class Percolation {
     /** does the system percolate?
      */
     public boolean percolates() {
-        if (isPercolates) {
-            return isPercolates;
-        }
-        for (int i = 0; i < N; ++i) {
-            if (isFull(N - 1, i)) {
-                isPercolates = true;
-                return true;
-            }
-        }
-
-        return false;
+        return isPercolates;
     }
     public static void main(String[] args) {
     }
