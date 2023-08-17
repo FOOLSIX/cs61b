@@ -7,7 +7,6 @@ public class Percolation {
     private final WeightedQuickUnionUF PERCOLATION_UNION_B;
     private final int VIRTUAL_TOP;
     private final int VIRTUAL_BOTTOM;
-    private boolean isPercolates = false;
     private final int[][] NEAR = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     private int numOfOpenSites = 0;
     private boolean[][] g;
@@ -19,7 +18,7 @@ public class Percolation {
         }
 
         PERCOLATION_UNION = new WeightedQuickUnionUF(N * N + 2);
-        PERCOLATION_UNION_B = new WeightedQuickUnionUF(N * N + 2);
+        PERCOLATION_UNION_B = new WeightedQuickUnionUF(N * N + 1);
         VIRTUAL_TOP = N * N;
         VIRTUAL_BOTTOM = N * N + 1;
         g = new boolean[N][N];
@@ -55,9 +54,6 @@ public class Percolation {
                 PERCOLATION_UNION_B.union(nx * N + ny, row * N + col);
             }
         }
-        if (!isPercolates && PERCOLATION_UNION.connected(VIRTUAL_TOP, VIRTUAL_BOTTOM)) {
-            isPercolates = true;
-        }
 
     }
 
@@ -65,7 +61,6 @@ public class Percolation {
         if (!validPos(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-
         return g[row][col];
     }
 
@@ -73,11 +68,7 @@ public class Percolation {
         if (!validPos(row, col)) {
             throw new IndexOutOfBoundsException();
         }
-        if (isPercolates) {
-            return g[row][col] && PERCOLATION_UNION_B.connected(VIRTUAL_TOP, row * N + col);
-        }
-
-        return g[row][col] && PERCOLATION_UNION.connected(VIRTUAL_TOP, row * N + col);
+        return g[row][col] && PERCOLATION_UNION_B.connected(VIRTUAL_TOP, row * N + col);
     }
 
     /** number of open sites
@@ -89,7 +80,7 @@ public class Percolation {
     /** does the system percolate?
      */
     public boolean percolates() {
-        return isPercolates;
+        return PERCOLATION_UNION.connected(VIRTUAL_TOP, VIRTUAL_BOTTOM);
     }
     public static void main(String[] args) {
     }
