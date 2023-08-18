@@ -1,5 +1,6 @@
 package lab9;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -99,19 +100,58 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
 
+    private void keySetHelper(Set<K> keysey, Node p) {
+        if (p == null) {
+            return;
+        }
+        keysey.add(p.key);
+        keySetHelper(keysey, p.left);
+        keySetHelper(keysey, p.right);
+    }
+
     /* Returns a Set view of the keys contained in this map. */
     @Override
     public Set<K> keySet() {
-        throw new UnsupportedOperationException();
+        Set<K> keyset = new HashSet<>();
+        keySetHelper(keyset, root);
+        return keyset;
     }
 
     /** Removes KEY from the tree if present
      *  returns VALUE removed,
      *  null on failed removal.
      */
+    private Node findnode(K key, Node p) {
+        if (p == null || key.equals(p.key)) {
+            return p;
+        }
+        if (key.compareTo(p.key) > 0) {
+            return findnode(key, p.right);
+        }
+        return findnode(key, p.left);
+    }
     @Override
     public V remove(K key) {
-        throw new UnsupportedOperationException();
+        Node node = findnode(key, root);
+        if (node == null) {
+            return null;
+        }
+        V ret = node.value;
+        if (node.left != null) {
+            Node r = node.right;
+            node = node.left;
+            Node lr = node;
+            while (lr.right != null) {
+                lr = lr.right;
+            }
+            lr.right = r;
+        } else if (node.right != null) {
+            node = node.right;
+        } else {
+            node = null;
+        }
+        --size;
+        return ret;
     }
 
     /** Removes the key-value entry for the specified key only if it is
@@ -120,7 +160,26 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      **/
     @Override
     public V remove(K key, V value) {
-        throw new UnsupportedOperationException();
+        Node node = findnode(key, root);
+        if (node == null || node.value != value) {
+            return null;
+        }
+        V ret = node.value;
+        if (node.left != null) {
+            Node r = node.right;
+            node = node.left;
+            Node lr = node;
+            while (lr.right != null) {
+                lr = lr.right;
+            }
+            lr.right = r;
+        } else if (node.right != null) {
+            node = node.right;
+        } else {
+            node = null;
+        }
+        --size;
+        return ret;
     }
 
     @Override
