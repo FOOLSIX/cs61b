@@ -27,12 +27,16 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
     private Node root;  /* Root node of the tree. */
+    private Node head;
     private int size; /* The number of key-value pairs in the tree */
 
     /* Creates an empty BSTMap. */
     public BSTMap() {
         this.clear();
+        head = new Node(null, null);
+        head.right = root;
     }
+    private V removeReturnVal;
 
     /* Removes all of the mappings from this map. */
     @Override
@@ -121,65 +125,85 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
      *  returns VALUE removed,
      *  null on failed removal.
      */
-    private Node findnode(K key, Node p) {
-        if (p == null || key.equals(p.key)) {
-            return p;
+    private Node removeHelper(K key, Node p) {
+        if (p == null) {
+            return null;
         }
-        if (key.compareTo(p.key) > 0) {
-            return findnode(key, p.right);
+        int cmp = key.compareTo(p.key);
+        if (cmp > 0) {
+            p.right = removeHelper(key, p.right);
+        } else if (cmp < 0) {
+            p.left = removeHelper(key, p.left);
+        } else {
+            removeReturnVal = p.value;
+            if (p.left != null) {
+                Node r = p.right;
+                Node lr = p.left;
+                while (lr.right != null) {
+                    lr = lr.right;
+                }
+                lr.right = r;
+                return p.left;
+            } else if (p.right != null) {
+                return p.right;
+            } else {
+                return null;
+            }
         }
-        return findnode(key, p.left);
+        return p;
     }
     @Override
     public V remove(K key) {
-        Node node = findnode(key, root);
-        if (node == null) {
-            return null;
+        removeReturnVal = null;
+        root = removeHelper(key, root);
+        if (removeReturnVal != null) {
+            --size;
         }
-        V ret = node.value;
-        if (node.left != null) {
-            Node r = node.right;
-            node = node.left;
-            Node lr = node;
-            while (lr.right != null) {
-                lr = lr.right;
-            }
-            lr.right = r;
-        } else if (node.right != null) {
-            node = node.right;
-        } else {
-            node = null;
-        }
-        --size;
-        return ret;
+        return removeReturnVal;
     }
 
     /** Removes the key-value entry for the specified key only if it is
      *  currently mapped to the specified value.  Returns the VALUE removed,
      *  null on failed removal.
      **/
-    @Override
-    public V remove(K key, V value) {
-        Node node = findnode(key, root);
-        if (node == null || node.value != value) {
+    private Node removeHelper(K key, V value, Node p) {
+        if (p == null) {
             return null;
         }
-        V ret = node.value;
-        if (node.left != null) {
-            Node r = node.right;
-            node = node.left;
-            Node lr = node;
-            while (lr.right != null) {
-                lr = lr.right;
-            }
-            lr.right = r;
-        } else if (node.right != null) {
-            node = node.right;
+        int cmp = key.compareTo(p.key);
+        if (cmp > 0) {
+            p.right = removeHelper(key, p.right);
+        } else if (cmp < 0) {
+            p.left = removeHelper(key, p.left);
         } else {
-            node = null;
+            if (value != p.value) {
+                return p;
+            }
+            removeReturnVal = p.value;
+            if (p.left != null) {
+                Node r = p.right;
+                Node lr = p.left;
+                while (lr.right != null) {
+                    lr = lr.right;
+                }
+                lr.right = r;
+                return p.left;
+            } else if (p.right != null) {
+                return p.right;
+            } else {
+                return null;
+            }
         }
-        --size;
-        return ret;
+        return p;
+    }
+    @Override
+    public V remove(K key, V value) {
+        removeReturnVal = null;
+        root = removeHelper(key, value, root);
+        if (removeReturnVal != null) {
+            --size;
+        }
+        return removeReturnVal;
     }
 
     @Override

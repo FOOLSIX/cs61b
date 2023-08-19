@@ -2,7 +2,7 @@ package lab9tester;
 
 import static org.junit.Assert.*;
 
-import org.junit.Assert;
+
 import org.junit.Test;
 import lab9.BSTMap;
 
@@ -89,14 +89,23 @@ public class TestBSTMap {
 
     @Test
     public void removeTest() {
-        BSTMap<String, Integer> b = new BSTMap<>();
-        int len = 1145;
-        for(int i = 0; i < len; ++i) {
-            b.put("i" + i,i);
-        }
-        for(int i = 0; i < len; ++i) {
-            assertNotNull(b.remove("i" + i, i));
-        }
+        BSTMap<Integer, Integer> b = new BSTMap<>();
+        b.put(9, 9);
+        b.put(5, 5);
+        b.put(6, 6);
+        b.put(7, 7);
+        b.put(3, 3);
+        b.put(4, 4);
+        b.put(1, 1);
+        b.put(15, 15);
+        b.put(13, 13);
+        b.put(19, 19);
+        assertEquals(9, (long) b.remove(9, 9));
+        assertEquals(5, (long) b.remove(5, 5));
+        assertEquals(3, (long) b.remove(3));
+        assertEquals(19, (long) b.remove(19));
+        assertNull(b.remove(19));
+
     }
 
     public static void main(String[] args) {
