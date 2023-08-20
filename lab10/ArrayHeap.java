@@ -119,7 +119,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         
         while (index * 2 <= size) {
             int l = leftIndex(index);
-            if(l + 1 <= size && contents[l + 1].myPriority < contents[l].myPriority) {
+            if (l + 1 <= size && contents[l + 1].myPriority < contents[l].myPriority) {
                 ++l;
             }
             if (contents[l].myPriority < contents[index].myPriority) {
@@ -256,7 +256,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
             myPriority = priority;
         }
 
-        public T item(){
+        public T item() {
             return myItem;
         }
 
