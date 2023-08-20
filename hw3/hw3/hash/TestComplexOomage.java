@@ -46,10 +46,10 @@ public class TestComplexOomage {
         int N = 100000;
         for (int i = 0; i < N; i += 1) {
             ArrayList<Integer> arr = new ArrayList<>();
-            for(int j = 0; j < 5; ++j) {
-                arr.add(StdRandom.uniform(0,255));
+            for (int j = 0; j < 5; ++j) {
+                arr.add(StdRandom.uniform(0, 255));
             }
-            for(int j = 0; j < 4; ++j) {
+            for (int j = 0; j < 4; ++j) {
                 arr.add(1);
             }
             deadlyList.add(new ComplexOomage(arr));
