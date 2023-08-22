@@ -2,14 +2,17 @@ package hw4.puzzle;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
+import org.junit.Test;
 
 public class EightPuzzleSolver {
     /***********************************************************************
      * Test routine for your Solver class. Uncomment and run to test
      * your basic functionality.
     **********************************************************************/
-    /*public static void main(String[] args) {
-        In in = new In(args[0]);
+    @Test(timeout = 1000)
+    public void test1() {
+        String arg = "input/puzzle3x3-31.txt";
+        In in = new In(arg);
         int N = in.readInt();
         int[][] tiles = new int[N][N];
         for (int i = 0; i < N; i++) {
@@ -23,5 +26,6 @@ public class EightPuzzleSolver {
         for (WorldState ws : solver.solution()) {
             StdOut.println(ws);
         }
-    }*/
+    }
+
 }
