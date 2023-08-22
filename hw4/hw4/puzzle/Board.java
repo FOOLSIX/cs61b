@@ -57,20 +57,6 @@ public class Board implements WorldState {
         }
         return neighbors;
     }
-    @Override
-    public boolean isGoal() {
-        for (int r = 0; r < N; ++r) {
-            for (int c = 0; c < N; ++c) {
-                int num = r * N + c + 1;
-                if (r == N - 1 && c == N - 1) {
-                    return true;
-                } else if (grid[r][c] != num) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
     public int hamming() {
         int cnt = 0;
         for (int r = 0; r < N; ++r) {
@@ -108,6 +94,9 @@ public class Board implements WorldState {
         return manhattan();
     }
     public boolean equals(Object y) {
+        if (y == null) {
+            return grid == null;
+        }
         if (y.getClass() != this.getClass()) {
             return false;
         }
@@ -124,12 +113,16 @@ public class Board implements WorldState {
         }
         return true;
     }
+    @Override
+    public int hashCode() {
+        return grid.hashCode();
+    }
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }

@@ -1,7 +1,5 @@
 package hw4.puzzle;
 
-import java.util.Comparator;
-
 public interface WorldState {
     /** Provides an estimate of the number of moves to reach the goal.
      * Must be less than or equal to the correct distance. */

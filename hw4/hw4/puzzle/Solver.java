@@ -34,7 +34,7 @@ public class Solver {
     }
     private MinPQ<SearchNode> solverSequenece;
     //private int debugnum = 0;
-    List<WorldState> ret;
+    private List<WorldState> ret;
     public Solver(WorldState initial) {
         solverSequenece = new MinPQ<>(Comparator.comparingInt((SearchNode n) ->
                 n.step + n.estimatedStep));
