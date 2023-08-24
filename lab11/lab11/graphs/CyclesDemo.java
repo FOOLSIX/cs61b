@@ -8,7 +8,7 @@ public class CyclesDemo {
      * a purple line. */
     
     public static void main(String[] args) {
-        Maze maze = new Maze("lab11/graphs/maze.txt");
+        Maze maze = new Maze(10, 4, 0.9, Maze.MazeType.BLANK);
 
         MazeCycles mc = new MazeCycles(maze);
         mc.solve();
