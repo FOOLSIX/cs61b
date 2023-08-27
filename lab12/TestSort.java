@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.Queue;
 import org.junit.Test;
 
-public class testSort {
+public class TestSort {
     @Test
     public void testMergeSort() {
         Queue<Integer> t = new Queue<>();
@@ -16,6 +16,7 @@ public class testSort {
         for (int num : t) {
             System.out.print(num + " ");
         }
+        System.out.print(t.size());
     }
     @Test
     public void testQuickSort() {
@@ -31,5 +32,6 @@ public class testSort {
         for (int num : t) {
             System.out.print(num + " ");
         }
+        System.out.print(t.size());
     }
 }

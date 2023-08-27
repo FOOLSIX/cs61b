@@ -72,6 +72,6 @@ public class QuickSort {
         partition(items, QuickSort.getRandomItem(items), less, equal, greater);
         less = quickSort(less);
         greater = quickSort(greater);
-        return catenate(catenate(less, equal), greater);
+        return items = catenate(catenate(less, equal), greater);
     }
 }

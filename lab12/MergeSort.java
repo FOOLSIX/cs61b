@@ -80,7 +80,7 @@ public class MergeSort {
             ans.enqueue(mergeSortedQueues(temp, ans.dequeue()));
         }
 
-        return ans.dequeue();
+        return items = ans.dequeue();
     }
 
 }
