@@ -9,14 +9,14 @@ public class TestSort {
         t.enqueue(5);
         t.enqueue(6);
         t.enqueue(1);
-        t.enqueue(3);
-        t.enqueue(2);
-        t.enqueue(4);
-        t = MergeSort.mergeSort(t);
-        for (int num : t) {
+        t.enqueue(1);
+        t.enqueue(1);
+        t.enqueue(1);
+        Queue<Integer> l = MergeSort.mergeSort(t);
+        for (int num : l) {
             System.out.print(num + " ");
         }
-        System.out.print(t.size());
+        System.out.print("\n" + t.size());
     }
     @Test
     public void testQuickSort() {
@@ -28,10 +28,10 @@ public class TestSort {
         t.enqueue(1);
         t.enqueue(1);
         t.enqueue(1);
-        t = QuickSort.quickSort(t);
-        for (int num : t) {
+        Queue<Integer> l = QuickSort.quickSort(t);
+        for (int num : l) {
             System.out.print(num + " ");
         }
-        System.out.print(t.size());
+        System.out.print("\n" + t.size());
     }
 }
