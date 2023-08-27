@@ -1,4 +1,5 @@
 import edu.princeton.cs.algs4.Queue;
+import org.junit.Test;
 
 public class MergeSort {
     /**
@@ -34,8 +35,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> ans = new Queue<>();
+        while (!items.isEmpty()) {
+            Queue<Item> temp = new Queue<>();
+            temp.enqueue(items.dequeue());
+            ans.enqueue(temp);
+        }
+        return ans;
     }
 
     /**
@@ -53,14 +59,28 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> ans = new Queue<>();
+        while (!(q1.isEmpty() && q2.isEmpty())) {
+            ans.enqueue(getMin(q1, q2));
+        }
+        return ans;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        if (items.size() == 0) {
+            return items;
+        }
+
+        Queue<Queue<Item>> ans = makeSingleItemQueues(items);
+
+        while (ans.size() > 1) {
+            Queue<Item> temp = ans.dequeue();
+            ans.enqueue(mergeSortedQueues(temp, ans.dequeue()));
+        }
+
+        return ans.dequeue();
     }
+
 }
