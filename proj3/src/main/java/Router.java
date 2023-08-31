@@ -58,7 +58,7 @@ public class Router {
         pq.add(new SearchNode(startNodeId, null, 0.0));
 
 
-        while (true) {
+        while (!pq.isEmpty()) {
             SearchNode searchNode = pq.remove();
             long thisNodeId = searchNode.nodeId;
             if (thisNodeId == endNodeId) {
@@ -80,6 +80,7 @@ public class Router {
                 }
             }
         }
+        return ans;
     }
     private static void getPath(SearchNode node, List<Long> path) {
         if (node == null) {
