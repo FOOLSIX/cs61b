@@ -1,10 +1,9 @@
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This class provides a shortestPath method for finding routes between two points
+ * This class provnodeIdes a shortestPath method for finding routes between two points
  * on the map. Start by using Dijkstra's, and if your code isn't fast enough for your
  * satisfaction (or the autograder), upgrade your implementation by switching it to A*.
  * Your code will probably not be fast enough to pass the autograder unless you use A*.
@@ -12,6 +11,19 @@ import java.util.regex.Pattern;
  * down to the priority you use to order your vertices.
  */
 public class Router {
+    private static class SearchNode {
+
+        Long nodeId;
+        SearchNode lastSearchNode;
+        double distanceToEnd;
+        double distanceFromStart;
+        SearchNode(Long i, SearchNode last, double distanceFromS, double distanceToE) {
+            nodeId = i;
+            lastSearchNode = last;
+            distanceFromStart = distanceFromS;
+            distanceToEnd = distanceToE;
+        }
+    }
     /**
      * Return a List of longs representing the shortest path from the node
      * closest to a start location and the node closest to the destination
@@ -21,11 +33,42 @@ public class Router {
      * @param stlat The latitude of the start location.
      * @param destlon The longitude of the destination location.
      * @param destlat The latitude of the destination location.
-     * @return A list of node id's in the order visited on the shortest path.
+     * @return A list of node nodeId's in the order visited on the shortest path.
      */
+
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        long startNodeId = g.closest(stlon, stlat);
+        long endNodeId = g.closest(destlon, destlat);
+        List<Long> ans = new LinkedList<>();
+        Set<Long> searchedNodeId = new HashSet<>();
+        PriorityQueue<SearchNode> priorityQueue = new PriorityQueue<>(
+                Comparator.comparingDouble(node -> node.distanceFromStart + node.distanceToEnd));
+        priorityQueue.add(new SearchNode(startNodeId, null, 0.0,
+                g.distance(startNodeId, endNodeId)));
+        while (true) {
+            SearchNode searchNode = priorityQueue.remove();
+            searchedNodeId.add(searchNode.nodeId);
+            if (searchNode.nodeId == endNodeId) {
+                getPath(searchNode, ans);
+                return ans;
+            }
+
+            for (Long nextId : g.nodes.get(searchNode.nodeId).neighbors) {
+                if (!searchedNodeId.contains(nextId)) {
+                    priorityQueue.add(new SearchNode(nextId, searchNode,
+                            searchNode.distanceFromStart + g.distance(searchNode.nodeId, nextId),
+                            g.distance(nextId, endNodeId)));
+                }
+            }
+        }
+    }
+    private static void getPath(SearchNode node, List<Long> path) {
+        if (node == null) {
+            return;
+        }
+        getPath(node.lastSearchNode, path);
+        path.add(node.nodeId);
     }
 
     /**
@@ -37,7 +80,7 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        return null;
     }
 
 
@@ -140,7 +183,7 @@ public class Router {
                 }
                 return nd;
             } else {
-                // not a valid nd
+                // not a valnodeId nd
                 return null;
             }
         }

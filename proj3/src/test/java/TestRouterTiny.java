@@ -24,7 +24,7 @@ public class TestRouterTiny {
         initialized = true;
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void test22to66() {
         List<Long> actual = Router.shortestPath(graphTiny, 0.2, 38.2, 0.6, 38.6);
         List<Long> expected = new ArrayList<>();
@@ -34,7 +34,7 @@ public class TestRouterTiny {
         assertEquals("Best path from 22 to 66 is incorrect.", expected, actual);
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void test22to11() {
         List<Long> actual = Router.shortestPath(graphTiny, 0.2, 38.2, 0.1, 38.1);
         List<Long> expected = new ArrayList<>();
@@ -43,7 +43,7 @@ public class TestRouterTiny {
         assertEquals(expected, actual);
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void test41to46() {
         List<Long> actual = Router.shortestPath(graphTiny, 0.4, 38.1, 0.4, 38.6);
         List<Long> expected = new ArrayList<>();
@@ -54,7 +54,7 @@ public class TestRouterTiny {
         assertEquals(expected, actual);
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void test66to55() {
         List<Long> actual = Router.shortestPath(graphTiny, 0.6, 38.6, 0.5, 38.5);
         List<Long> expected = new ArrayList<>();
