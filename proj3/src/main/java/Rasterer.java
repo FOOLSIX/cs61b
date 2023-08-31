@@ -43,10 +43,8 @@ public class Rasterer {
      */
     private boolean validParam(Map<String, Double> params) {
         return params.containsKey("lrlon") && params.containsKey("ullon")
-                &&
-               params.containsKey("w") && params.containsKey("h")
-                &&
-               params.containsKey("lrlat") && params.containsKey("ullat");
+                && params.containsKey("w") && params.containsKey("h")
+                && params.containsKey("lrlat") && params.containsKey("ullat");
     }
     private int getDepth(double needLonDPP) {
         int depth = 0;
@@ -72,6 +70,7 @@ public class Rasterer {
         double h = params.get("h");
         double lrlat = params.get("lrlat");
         double ullat = params.get("ullat");
+
         if (ullon < MapServer.ROOT_ULLON || ullat > MapServer.ROOT_ULLAT
             || lrlon > MapServer.ROOT_LRLON || lrlat < MapServer.ROOT_LRLAT
             || ullon >= lrlon || ullat <= lrlat) {
@@ -84,8 +83,8 @@ public class Rasterer {
 
         double wBlock = (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / (Math.pow(2, depth));
         double hBlock = (MapServer.ROOT_ULLAT - MapServer.ROOT_LRLAT) / (Math.pow(2, depth));
-        int startX = (int) Math.floor((ullon - MapServer.ROOT_ULLON) / wBlock);
-        int startY = (int) Math.floor((MapServer.ROOT_ULLAT - ullat) / hBlock);
+        int startX = (int) ((ullon - MapServer.ROOT_ULLON) / wBlock);
+        int startY = (int) ((MapServer.ROOT_ULLAT - ullat) / hBlock);
         double rasterUlLon = MapServer.ROOT_ULLON + wBlock * startX;
         double rasterUlLat = MapServer.ROOT_ULLAT - hBlock * startY;
 
