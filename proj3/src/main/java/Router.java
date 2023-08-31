@@ -48,9 +48,9 @@ public class Router {
         List<Long> ans = new LinkedList<>();
         Map<Long, Double> bestDist = new HashMap<>();
         Set<Long> searchedNodeId = new HashSet<>();
-
         PriorityQueue<SearchNode> pq = new PriorityQueue<>(
                 Comparator.comparingDouble(node -> node.priority));
+
         for (Long id : g.vertices()) {
             bestDist.put(id, Double.MAX_VALUE);
         }
@@ -61,25 +61,24 @@ public class Router {
         while (true) {
             SearchNode searchNode = pq.remove();
             long thisNodeId = searchNode.nodeId;
+            if (thisNodeId == endNodeId) {
+                getPath(searchNode, ans);
+                return ans;
+            }
             if (searchedNodeId.contains(thisNodeId)) {
                 continue;
             }
 
             searchedNodeId.add(thisNodeId);
 
-            if (thisNodeId == endNodeId) {
-                getPath(searchNode, ans);
-                return ans;
-            }
+
 
             for (Long nextId : g.nodes.get(thisNodeId).neighbors) {
                 double distance = bestDist.get(thisNodeId) + g.distance(thisNodeId, nextId);
                 if (bestDist.get(nextId) > distance) {
                     bestDist.replace(nextId, distance);
-                    pq.removeIf(ns -> ns.nodeId == nextId);
                     pq.add(new SearchNode(nextId, searchNode, distance
                             + g.distance(nextId, endNodeId)));
-
                 }
             }
         }
