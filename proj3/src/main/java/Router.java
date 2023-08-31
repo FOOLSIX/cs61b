@@ -1,7 +1,6 @@
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  * This class provnodeIdes a shortestPath method for finding routes between two points
  * on the map. Start by using Dijkstra's, and if your code isn't fast enough for your
@@ -15,13 +14,11 @@ public class Router {
 
         Long nodeId;
         SearchNode lastSearchNode;
-        double distanceToEnd;
-        double distanceFromStart;
-        SearchNode(Long i, SearchNode last, double distanceFromS, double distanceToE) {
+        double priority;
+        SearchNode(Long i, SearchNode last, double p) {
             nodeId = i;
             lastSearchNode = last;
-            distanceFromStart = distanceFromS;
-            distanceToEnd = distanceToE;
+            priority = p;
         }
     }
     /**
@@ -41,24 +38,40 @@ public class Router {
         long startNodeId = g.closest(stlon, stlat);
         long endNodeId = g.closest(destlon, destlat);
         List<Long> ans = new LinkedList<>();
+        Map<Long, Double> bestDist = new HashMap<>();
         Set<Long> searchedNodeId = new HashSet<>();
-        PriorityQueue<SearchNode> priorityQueue = new PriorityQueue<>(
-                Comparator.comparingDouble(node -> node.distanceFromStart));
-        priorityQueue.add(new SearchNode(startNodeId, null, 0.0,
-                g.distance(startNodeId, endNodeId)));
+
+        PriorityQueue<SearchNode> pq = new PriorityQueue<>(
+                Comparator.comparingDouble(node -> node.priority));
+        for (Long id : g.vertices()) {
+            bestDist.put(id, Double.MAX_VALUE);
+        }
+        bestDist.replace(startNodeId, 0.0);
+        pq.add(new SearchNode(startNodeId, null, 0.0));
+
+
         while (true) {
-            SearchNode searchNode = priorityQueue.remove();
-            searchedNodeId.add(searchNode.nodeId);
-            if (searchNode.nodeId == endNodeId) {
+            SearchNode searchNode = pq.remove();
+            long thisNodeId = searchNode.nodeId;
+            if (searchedNodeId.contains(thisNodeId)) {
+                continue;
+            }
+
+            searchedNodeId.add(thisNodeId);
+
+            if (thisNodeId == endNodeId) {
                 getPath(searchNode, ans);
                 return ans;
             }
 
-            for (Long nextId : g.nodes.get(searchNode.nodeId).neighbors) {
-                if (!searchedNodeId.contains(nextId)) {
-                    priorityQueue.add(new SearchNode(nextId, searchNode,
-                            searchNode.distanceFromStart + g.distance(searchNode.nodeId, nextId),
-                            g.distance(nextId, endNodeId)));
+            for (Long nextId : g.nodes.get(thisNodeId).neighbors) {
+                double distance = bestDist.get(thisNodeId) + g.distance(thisNodeId, nextId);
+                if (bestDist.get(nextId) > distance) {
+                    bestDist.replace(nextId, distance);
+                    pq.removeIf(ns -> ns.nodeId == nextId);
+                    pq.add(new SearchNode(nextId, searchNode, distance
+                            + g.distance(nextId, endNodeId)));
+
                 }
             }
         }
