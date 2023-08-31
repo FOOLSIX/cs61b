@@ -43,7 +43,7 @@ public class Router {
         List<Long> ans = new LinkedList<>();
         Set<Long> searchedNodeId = new HashSet<>();
         PriorityQueue<SearchNode> priorityQueue = new PriorityQueue<>(
-                Comparator.comparingDouble(node -> node.distanceFromStart + node.distanceToEnd));
+                Comparator.comparingDouble(node -> node.distanceFromStart));
         priorityQueue.add(new SearchNode(startNodeId, null, 0.0,
                 g.distance(startNodeId, endNodeId)));
         while (true) {

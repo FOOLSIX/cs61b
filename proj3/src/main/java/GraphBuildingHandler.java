@@ -70,7 +70,8 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* We encountered a new <node...> tag. */
             activeState = "node";
             lastId = Long.parseLong(attributes.getValue("id"));
-            GraphDB.Node node = new GraphDB.Node(lastId, Double.parseDouble(attributes.getValue("lon")),
+            GraphDB.Node node = new GraphDB.Node(lastId,
+                    Double.parseDouble(attributes.getValue("lon")),
                     Double.parseDouble(attributes.getValue("lat")));
             g.nodes.put(lastId, node);
 
