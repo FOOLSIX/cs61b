@@ -20,9 +20,9 @@ import java.util.regex.Pattern;
 public class Router {
     private static class SearchNode {
 
-        Long nodeId;
-        SearchNode lastSearchNode;
-        double priority;
+        final long nodeId;
+        final SearchNode lastSearchNode;
+        final double priority;
         SearchNode(Long i, SearchNode last, double p) {
             nodeId = i;
             lastSearchNode = last;
@@ -51,7 +51,7 @@ public class Router {
         PriorityQueue<SearchNode> pq = new PriorityQueue<>(
                 Comparator.comparingDouble(node -> node.priority));
 
-        for (Long id : g.vertices()) {
+        for (long id : g.vertices()) {
             bestDist.put(id, Double.MAX_VALUE);
         }
         bestDist.replace(startNodeId, 0.0);
@@ -65,15 +65,13 @@ public class Router {
                 getPath(searchNode, ans);
                 return ans;
             }
+
             if (searchedNodeId.contains(thisNodeId)) {
                 continue;
             }
-
             searchedNodeId.add(thisNodeId);
 
-
-
-            for (Long nextId : g.nodes.get(thisNodeId).neighbors) {
+            for (long nextId : g.nodes.get(thisNodeId).neighbors) {
                 double distance = bestDist.get(thisNodeId) + g.distance(thisNodeId, nextId);
                 if (bestDist.get(nextId) > distance) {
                     bestDist.replace(nextId, distance);
