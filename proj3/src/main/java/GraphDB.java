@@ -6,12 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.HashSet;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
-import java.util.HashMap;
-
+import java.util.*;
 
 
 /**
@@ -212,5 +207,45 @@ public class GraphDB {
      */
     double lat(long v) {
         return nodes.get(v).lat;
+    }
+
+    /**
+     * In linear time, collect all the names of OSM locations that prefix-match the query string.
+     * @param prefix Prefix string to be searched for. Could be any case, with our without
+     *               punctuation.
+     * @return A <code>List</code> of the full names of locations whose cleaned name matches the
+     * cleaned <code>prefix</code>.
+     */
+    public List<String> getLocationsByPrefix(String prefix) {
+        return trie.getWordWithPrefix(GraphDB.cleanString(prefix));
+    }
+
+    /**
+     * Collect all locations that match a cleaned <code>locationName</code>, and return
+     * information about each node that matches.
+     * @param locationName A full name of a location searched for.
+     * @return A list of locations whose cleaned name matches the
+     * cleaned <code>locationName</code>, and each location is a map of parameters for the Json
+     * response as specified: <br>
+     * "lat" : Number, The latitude of the node. <br>
+     * "lon" : Number, The longitude of the node. <br>
+     * "name" : String, The actual name of the node. <br>
+     * "id" : Number, The id of the node. <br>
+     */
+    public List<Map<String, Object>> getLocations(String locationName) {
+        String cleanedString = GraphDB.cleanString(locationName);
+        if (!nameToId.containsKey(cleanedString)) {
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> ans = new ArrayList<>();
+        for (long id : nameToId.get(cleanedString)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", id);
+            map.put("name", nodes.get(id).name);
+            map.put("lon", lon(id));
+            map.put("lat", lat(id));
+            ans.add(map);
+        }
+        return ans;
     }
 }
