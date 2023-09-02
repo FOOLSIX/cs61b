@@ -109,8 +109,7 @@ public class GraphBuildingHandler extends DefaultHandler {
                 }
                 /* Hint: Setting a "flag" is good enough! */
             } else if (k.equals("name")) {
-                String cleanedString = GraphDB.cleanString(v);
-                g.trie.add(cleanedString, v);
+
             }
 
         } else if (activeState.equals("node") && qName.equals("tag")
@@ -119,9 +118,9 @@ public class GraphBuildingHandler extends DefaultHandler {
             String v = attributes.getValue("v");
             String cleanedString = GraphDB.cleanString(v);
             g.trie.add(cleanedString, v);
-            g.nameToId.putIfAbsent(cleanedString, new HashSet<>());
-            g.nameToId.get(cleanedString).add(lastId);
             g.nodes.get(lastId).name = v;
+            g.cleanedNameToNodes.putIfAbsent(cleanedString, new LinkedList<>());
+            g.cleanedNameToNodes.get(cleanedString).add(g.nodes.get(lastId));
         }
     }
 

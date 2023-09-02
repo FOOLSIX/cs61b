@@ -296,20 +296,20 @@ public class MapServer {
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
         String cleanedString = GraphDB.cleanString(locationName);
-        if (!graph.nameToId.containsKey(cleanedString)) {
-            return new ArrayList<>();
+        List<Map<String, Object>> ans = new LinkedList<>();
+        if (!graph.cleanedNameToNodes.containsKey(cleanedString)) {
+            return ans;
         }
 
-        List<Map<String, Object>> ans = new ArrayList<>();
-        for (long id : graph.nameToId.get(cleanedString)) {
+        for (GraphDB.Node node : graph.cleanedNameToNodes.get(cleanedString)) {
+
             Map<String, Object> map = new HashMap<>();
-            map.put("id", id);
-            map.put("name", graph.nodes.get(id).name);
-            map.put("lon", graph.lon(id));
-            map.put("lat", graph.lat(id));
+            map.put("id", node.id);
+            map.put("name", node.name);
+            map.put("lon", node.lon);
+            map.put("lat", node.lat);
             ans.add(map);
         }
-
         return ans;
     }
 

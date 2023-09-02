@@ -1,9 +1,9 @@
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashSet;
+import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Basic sanity check for your GraphDB construction. This test simply tests a small number of
@@ -141,5 +141,24 @@ public class TestGraphBuilding {
             N += 1;
         }
         return N;
+    }
+
+    @Test
+    public void testPrefix() {
+        String[] t = new String[]{"Taqueria Talavera", "Taqueria Montecristo", "Target express",
+                "Taste of the Himalayas", "Tasty Pot", "Taco Bell", "Tay Tah Cafe",
+                "Takara Sushi Restaurant", "Tako Sushi", "Tamon Tea", "Tandoori Nite"};
+
+        Set<String> expected = new HashSet<>(Arrays.asList(t));
+        Set<String> actual = new HashSet<>(graph.getLocationsByPrefix("ta"));
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetLocation() {
+        List<Map<String, Object>> actual = graph.getLocations("Tasty Pot");
+        assertFalse(actual.isEmpty());
+
     }
 }

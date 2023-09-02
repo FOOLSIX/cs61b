@@ -60,8 +60,8 @@ public class GraphDB {
      * @param dbPath Path to the XML file to be parsed.
      */
     HashMap<Long, Node> nodes = new HashMap<>();
+    HashMap<String, List<Node>> cleanedNameToNodes = new HashMap<>();
     HashMap<Long, Way> ways = new HashMap<>();
-    HashMap<String, Set<Long>> nameToId = new HashMap<>();
     MyTrie trie = new MyTrie();
     public GraphDB(String dbPath) {
         try {
@@ -101,7 +101,7 @@ public class GraphDB {
         }
     }
     private void clean() {
-        nodes.values().removeIf(v -> v.neighbors.isEmpty());
+        nodes.values().removeIf(node -> node.neighbors.isEmpty());
     }
 
     /**
@@ -234,16 +234,18 @@ public class GraphDB {
      */
     public List<Map<String, Object>> getLocations(String locationName) {
         String cleanedString = GraphDB.cleanString(locationName);
-        if (!nameToId.containsKey(cleanedString)) {
-            return new ArrayList<>();
+        List<Map<String, Object>> ans = new LinkedList<>();
+        if (!cleanedNameToNodes.containsKey(cleanedString)) {
+            return ans;
         }
-        List<Map<String, Object>> ans = new ArrayList<>();
-        for (long id : nameToId.get(cleanedString)) {
+
+        for (Node node : cleanedNameToNodes.get(cleanedString)) {
+
             Map<String, Object> map = new HashMap<>();
-            map.put("id", id);
-            map.put("name", nodes.get(id).name);
-            map.put("lon", lon(id));
-            map.put("lat", lat(id));
+            map.put("id", node.id);
+            map.put("name", node.name);
+            map.put("lon", node.lon);
+            map.put("lat", node.lat);
             ans.add(map);
         }
         return ans;
