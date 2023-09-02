@@ -295,22 +295,7 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        String cleanedString = GraphDB.cleanString(locationName);
-        List<Map<String, Object>> ans = new LinkedList<>();
-        if (!graph.cleanedNameToNodes.containsKey(cleanedString)) {
-            return ans;
-        }
-
-        for (GraphDB.Node node : graph.cleanedNameToNodes.get(cleanedString)) {
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", node.id);
-            map.put("name", node.name);
-            map.put("lon", node.lon);
-            map.put("lat", node.lat);
-            ans.add(map);
-        }
-        return ans;
+        return graph.getLocations(locationName);
     }
 
     /**

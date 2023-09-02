@@ -71,12 +71,7 @@ public class Rasterer {
         double lrlat = params.get("lrlat");
         double ullat = params.get("ullat");
 
-        if (ullon < MapServer.ROOT_ULLON || ullat > MapServer.ROOT_ULLAT
-            || lrlon > MapServer.ROOT_LRLON || lrlat < MapServer.ROOT_LRLAT
-            || ullon >= lrlon || ullat <= lrlat) {
-            results.put("query_success", false);
-            return results;
-        }
+
 
         int depth = getDepth((lrlon - ullon) / w);
         results.put("depth", depth);
