@@ -111,8 +111,6 @@ public class GraphBuildingHandler extends DefaultHandler {
             } else if (k.equals("name")) {
                 String cleanedString = GraphDB.cleanString(v);
                 g.trie.add(cleanedString, v);
-                g.nameToId.putIfAbsent(cleanedString, new HashSet<>());
-                g.nameToId.get(cleanedString).add(lastId);
             }
 
         } else if (activeState.equals("node") && qName.equals("tag")

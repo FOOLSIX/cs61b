@@ -299,6 +299,7 @@ public class MapServer {
         if (!graph.nameToId.containsKey(cleanedString)) {
             return new ArrayList<>();
         }
+
         List<Map<String, Object>> ans = new ArrayList<>();
         for (long id : graph.nameToId.get(cleanedString)) {
             Map<String, Object> map = new HashMap<>();
@@ -308,6 +309,7 @@ public class MapServer {
             map.put("lat", graph.lat(id));
             ans.add(map);
         }
+
         return ans;
     }
 

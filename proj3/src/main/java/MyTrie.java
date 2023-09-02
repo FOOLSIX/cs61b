@@ -3,6 +3,7 @@ import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class MyTrie {
     private class TrieNode {
@@ -40,16 +41,15 @@ public class MyTrie {
             curNode = curNode.next.get(c);
         }
         List<String> ans = new LinkedList<>();
-        getAllWordWithPrefix(root, ans);
+        Queue<TrieNode> q = new LinkedList<>();
+        q.add(curNode);
+        while (!q.isEmpty()) {
+            TrieNode node = q.remove();
+            if (node.hasWord()) {
+                ans.addAll(node.names);
+            }
+            q.addAll(node.next.values());
+        }
         return ans;
-    }
-    private void getAllWordWithPrefix(TrieNode node, List<String> ans) {
-        if (node.hasWord()) {
-            ans.addAll(node.names);
-        }
-
-        for (TrieNode next : node.next.values()) {
-            getAllWordWithPrefix(next, ans);
-        }
     }
 }
