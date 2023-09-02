@@ -2,7 +2,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.*;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Arrays;
+
+
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -97,6 +103,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             String v = attributes.getValue("v");
             if (k.equals("maxspeed")) {
                 //no need to save
+                return;
             } else if (k.equals("highway")) {
                 if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
                     List<Long> lst = g.ways.get(lastId).connectedNodes;
@@ -109,7 +116,7 @@ public class GraphBuildingHandler extends DefaultHandler {
                 }
                 /* Hint: Setting a "flag" is good enough! */
             } else if (k.equals("name")) {
-
+                return;
             }
 
         } else if (activeState.equals("node") && qName.equals("tag")
@@ -137,9 +144,7 @@ public class GraphBuildingHandler extends DefaultHandler {
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-        if (qName.equals("way")) {
-            return;
-        }
+
     }
 
 }
