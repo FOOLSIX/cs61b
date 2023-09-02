@@ -21,7 +21,7 @@ public class MyTrie {
     MyTrie() {
         root = new TrieNode();
     }
-    public void add(String s,String name) {
+    public void add(String s, String name) {
         TrieNode curNode = root;
         for (char c : s.toCharArray()) {
             curNode.next.putIfAbsent(c, new TrieNode());
@@ -35,7 +35,7 @@ public class MyTrie {
     public List<String> getWordWithPrefix(String prefix) {
         TrieNode curNode = root;
         for (char c : prefix.toCharArray()) {
-            if(!curNode.next.containsKey(c)) {
+            if (!curNode.next.containsKey(c)) {
                 return new LinkedList<>();
             }
             curNode = curNode.next.get(c);
