@@ -4,16 +4,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
-
 
 /* Maven is used to pull in these dependencies. */
 import com.google.gson.Gson;
@@ -285,7 +279,7 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        return graph.trie.getWordWithPrefix(GraphDB.cleanString(prefix));
     }
 
     /**
@@ -301,7 +295,20 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        String cleanedString = GraphDB.cleanString(locationName);
+        if (!graph.nameToId.containsKey(cleanedString)) {
+            return new ArrayList<>();
+        }
+        List<Map<String, Object>> ans = new ArrayList<>();
+        for (long id : graph.nameToId.get(cleanedString)) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", id);
+            map.put("name", graph.nodes.get(id).name);
+            map.put("lon", graph.lon(id));
+            map.put("lat", graph.lat(id));
+            ans.add(map);
+        }
+        return ans;
     }
 
     /**

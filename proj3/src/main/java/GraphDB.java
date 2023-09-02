@@ -9,7 +9,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 
@@ -32,12 +31,13 @@ public class GraphDB {
         double lon;
         double lat;
         Set<Long> neighbors;
-        String name = "";
+        String name;
         Node(long i, double lo, double la) {
             id = i;
             lon = lo;
             lat = la;
             neighbors = new HashSet<>();
+            name = null;
         }
         void connectTo(Node node) {
             if (node.id == id) {
@@ -51,11 +51,12 @@ public class GraphDB {
     static class Way {
         long id;
         List<Long> connectedNodes;
-        Map<String, String> extraInfo;
+        String name;
+
         Way(long i) {
             id = i;
             connectedNodes = new LinkedList<>();
-            extraInfo = new HashMap<>();
+            name = null;
         }
     }
     /**
@@ -65,6 +66,8 @@ public class GraphDB {
      */
     HashMap<Long, Node> nodes = new HashMap<>();
     HashMap<Long, Way> ways = new HashMap<>();
+    HashMap<String, Set<Long>> nameToId = new HashMap<>();
+    MyTrie trie = new MyTrie();
     public GraphDB(String dbPath) {
         try {
             File inputFile = new File(dbPath);

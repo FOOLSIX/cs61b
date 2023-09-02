@@ -2,10 +2,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  *  Parses OSM XML files using an XML SAX parser. Used to construct the graph of roads for
@@ -99,10 +96,9 @@ public class GraphBuildingHandler extends DefaultHandler {
             String k = attributes.getValue("k");
             String v = attributes.getValue("v");
             if (k.equals("maxspeed")) {
-                g.ways.get(lastId).extraInfo.put(k, GraphDB.cleanString(v));
+                //no need to save
             } else if (k.equals("highway")) {
                 if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
-                    g.ways.get(lastId).extraInfo.put(k, GraphDB.cleanString(v));
                     List<Long> lst = g.ways.get(lastId).connectedNodes;
                     long last = lst.get(0);
                     for (long nodeId : lst) {
@@ -113,16 +109,21 @@ public class GraphBuildingHandler extends DefaultHandler {
                 }
                 /* Hint: Setting a "flag" is good enough! */
             } else if (k.equals("name")) {
-                g.ways.get(lastId).extraInfo.put(k, GraphDB.cleanString(v));
+                String cleanedString = GraphDB.cleanString(v);
+                g.trie.add(cleanedString, v);
+                g.nameToId.putIfAbsent(cleanedString, new HashSet<>());
+                g.nameToId.get(cleanedString).add(lastId);
             }
 
         } else if (activeState.equals("node") && qName.equals("tag")
                 && attributes.getValue("k").equals("name")) {
             /* While looking at a node, we found a <tag...> with k="name". */
-            g.nodes.get(lastId).name = GraphDB.cleanString(attributes.getValue("v"));
-            /* Hint: Since we found this <tag...> INSIDE a node, we should probably remember which
-            node this tag belongs to. Remember XML is parsed top-to-bottom, so probably it's the
-            last node that you looked at (check the first if-case). */
+            String v = attributes.getValue("v");
+            String cleanedString = GraphDB.cleanString(v);
+            g.trie.add(cleanedString, v);
+            g.nameToId.putIfAbsent(cleanedString, new HashSet<>());
+            g.nameToId.get(cleanedString).add(lastId);
+            g.nodes.get(lastId).name = v;
         }
     }
 
