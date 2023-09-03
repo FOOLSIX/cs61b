@@ -65,8 +65,11 @@ public class CountingSortTester {
 
     @Test
     public void testLSD() {
-        String[] tes = new String[]{"123", "2", "", "12", "33"};
+        String[] tes = new String[]{"", "\0"};
         String[] actual = RadixSort.sort(tes);
+        for (String s : actual) {
+            System.out.println(s);
+        }
         Arrays.sort(tes);
         assertArrayEquals(tes, actual);
     }

@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Class for doing Radix sort
  *
@@ -21,24 +23,9 @@ public class RadixSort {
         for (String s : asciis) {
             len = Math.max(len, s.length());
         }
+
         for (int i = len - 1; i >= 0; --i) {
-            int[] bucket = new int[256];
-            for (String s : asciis) {
-                char c = i < s.length() ? s.charAt(i) : 0;
-                bucket[c]++;
-            }
-            for (int j = 1; j < 256; ++j) {
-                bucket[j] += bucket[j - 1];
-            }
-            sorted = lsdHelper(sorted, bucket, i);
-        }
-        return sorted;
-    }
-    private static String[] lsdHelper(String[] asciis, int[] bucket, int i) {
-        String[] sorted = new String[asciis.length];
-        for (int j = asciis.length - 1; j >= 0; --j) {
-            char c = i < asciis[j].length() ? asciis[j].charAt(i) : 0;
-            sorted[--bucket[c]] = asciis[j];
+            sortHelperLSD(sorted, i);
         }
         return sorted;
     }
@@ -50,8 +37,27 @@ public class RadixSort {
      * @param index The position to sort the Strings on.
      */
     private static void sortHelperLSD(String[] asciis, int index) {
-        // Optional LSD helper method for required LSD radix sort
-        return;
+        int[] bucket = new int[257];
+        for (String s : asciis) {
+            int c = getCharAt(s, index);
+            bucket[c]++;
+        }
+        for (int j = 1; j < 256; ++j) {
+            bucket[j] += bucket[j - 1];
+        }
+        String[] sorted = new String[asciis.length];
+        for (int j = asciis.length - 1; j >= 0; --j) {
+            int c = getCharAt(asciis[j], index);
+            sorted[--bucket[c]] = asciis[j];
+        }
+        System.arraycopy(sorted, 0, asciis, 0, sorted.length);
+    }
+
+    private static int getCharAt(String s, int index) {
+        if (s.length() > index) {
+            return (int) s.charAt(index) + 1;
+        }
+        return 0;
     }
 
     /**
