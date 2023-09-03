@@ -63,7 +63,7 @@ public class CountingSortTester {
 
     @Test
     public void testLSD() {
-        String[] tes = new String[]{"a", "abb", "bda", "", "e", "afsdgre"};
+        String[] tes = new String[]{"110", "1", "12", "", "2", "31"};
         for (String s : RadixSort.sort(tes)) {
             System.out.println(s);
         }

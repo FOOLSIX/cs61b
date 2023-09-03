@@ -35,11 +35,11 @@ public class RadixSort {
 
         return sorted;
     }
-    private static String[] lsdHelper(String[] asciis, int[] bucket,int i) {
+    private static String[] lsdHelper(String[] asciis, int[] bucket, int i) {
         String[] sorted = new String[asciis.length];
-        for (String s : asciis) {
-            char c = s.length() >= i ? s.charAt(s.length() - i) : 0;
-            sorted[bucket[c]-- - 1] = s;
+        for (int j = asciis.length - 1; j >= 0; --j) {
+            char c = asciis[j].length() >= i ? asciis[j].charAt(asciis[j].length() - i) : 0;
+            sorted[--bucket[c]] = asciis[j];
         }
         return sorted;
     }
