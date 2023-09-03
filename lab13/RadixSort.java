@@ -16,8 +16,32 @@ public class RadixSort {
      * @return String[] the sorted array
      */
     public static String[] sort(String[] asciis) {
-        // TODO: Implement LSD Sort
-        return null;
+        String[] sorted = asciis.clone();
+        int len = 0;
+        for (String s : asciis) {
+            len = Math.max(len, s.length());
+        }
+        for (int i = 1; i <= len; ++i) {
+            int[] bucket = new int[256];
+            for (String s : asciis) {
+                char c = s.length() >= i ? s.charAt(s.length() - i) : 0;
+                bucket[c]++;
+            }
+            for (int j = 1; j < 256; ++j) {
+                bucket[j] += bucket[j - 1];
+            }
+            sorted = lsdHelper(sorted, bucket, i);
+        }
+
+        return sorted;
+    }
+    private static String[] lsdHelper(String[] asciis, int[] bucket,int i) {
+        String[] sorted = new String[asciis.length];
+        for (String s : asciis) {
+            char c = s.length() >= i ? s.charAt(s.length() - i) : 0;
+            sorted[bucket[c]-- - 1] = s;
+        }
+        return sorted;
     }
 
     /**
