@@ -1,6 +1,8 @@
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class CountingSortTester {
 
     /**
@@ -63,10 +65,10 @@ public class CountingSortTester {
 
     @Test
     public void testLSD() {
-        String[] tes = new String[]{"110", "1", "12", "", "2", "31"};
-        for (String s : RadixSort.sort(tes)) {
-            System.out.println(s);
-        }
+        String[] tes = new String[]{"123", "2", "", "12", "33"};
+        String[] actual = RadixSort.sort(tes);
+        Arrays.sort(tes);
+        assertArrayEquals(tes, actual);
     }
 
 

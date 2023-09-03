@@ -21,10 +21,10 @@ public class RadixSort {
         for (String s : asciis) {
             len = Math.max(len, s.length());
         }
-        for (int i = 1; i <= len; ++i) {
+        for (int i = len - 1; i >= 0; --i) {
             int[] bucket = new int[256];
             for (String s : asciis) {
-                char c = s.length() >= i ? s.charAt(s.length() - i) : 0;
+                char c = i < s.length() ? s.charAt(i) : 0;
                 bucket[c]++;
             }
             for (int j = 1; j < 256; ++j) {
@@ -32,13 +32,12 @@ public class RadixSort {
             }
             sorted = lsdHelper(sorted, bucket, i);
         }
-
         return sorted;
     }
     private static String[] lsdHelper(String[] asciis, int[] bucket, int i) {
         String[] sorted = new String[asciis.length];
         for (int j = asciis.length - 1; j >= 0; --j) {
-            char c = asciis[j].length() >= i ? asciis[j].charAt(asciis[j].length() - i) : 0;
+            char c = i < asciis[j].length() ? asciis[j].charAt(i) : 0;
             sorted[--bucket[c]] = asciis[j];
         }
         return sorted;
