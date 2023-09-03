@@ -1,4 +1,3 @@
-import java.util.Arrays;
 
 /**
  * Class for doing Radix sort
@@ -42,7 +41,7 @@ public class RadixSort {
             int c = getCharAt(s, index);
             bucket[c]++;
         }
-        for (int j = 1; j < 256; ++j) {
+        for (int j = 1; j < 257; ++j) {
             bucket[j] += bucket[j - 1];
         }
         String[] sorted = new String[asciis.length];
@@ -54,7 +53,7 @@ public class RadixSort {
     }
 
     private static int getCharAt(String s, int index) {
-        if (s.length() > index) {
+        if (s.length() > index && index >= 0) {
             return (int) s.charAt(index) + 1;
         }
         return 0;

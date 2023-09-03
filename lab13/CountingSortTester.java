@@ -64,8 +64,8 @@ public class CountingSortTester {
     }
 
     @Test
-    public void testLSD() {
-        String[] tes = new String[]{"", "\0"};
+    public void testLSD1() {
+        String[] tes = new String[]{"", "\0", "ÿ"};
         String[] actual = RadixSort.sort(tes);
         for (String s : actual) {
             System.out.println(s);
@@ -73,7 +73,16 @@ public class CountingSortTester {
         Arrays.sort(tes);
         assertArrayEquals(tes, actual);
     }
-
+    @Test
+    public void testLSD2() {
+        String[] tes = new String[]{};
+        String[] actual = RadixSort.sort(tes);
+        for (String s : actual) {
+            System.out.println(s);
+        }
+        Arrays.sort(tes);
+        assertArrayEquals(tes, actual);
+    }
 
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(CountingSortTester.class);
