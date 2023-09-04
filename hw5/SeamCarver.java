@@ -32,8 +32,8 @@ public class SeamCarver {
         return cal(x1, y, x2, y) + cal(x, y1, x, y2);
     }
     private int cal(int x1, int y1, int x2, int y2) {
-        int rgb1 = picture().getRGB(x1, y1);
-        int rgb2 = picture().getRGB(x2, y2);
+        int rgb1 = picture.getRGB(x1, y1);
+        int rgb2 = picture.getRGB(x2, y2);
         int rx2 = ((rgb1 >> 16) - (rgb2 >> 16));
         int gx2 = (((rgb1 >> 8) & 0xff) - ((rgb2 >> 8) & 0xff));
         int bx2 = ((rgb1 & 0xff) - (rgb2 & 0xff));
@@ -48,7 +48,7 @@ public class SeamCarver {
     public int[] findVerticalSeam() {
         return findSeamHelper(width(), height(), false);
     }
-    private int[] findSeamHelper(int w,int h, boolean mode) {
+    private int[] findSeamHelper(int w, int h, boolean mode) {
         int[] ans = new int[h];
         if (w == 1) {
             Arrays.fill(ans, 0);
