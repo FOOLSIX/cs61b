@@ -5,11 +5,11 @@ public class SeamCarver {
     private final Picture picture;
 
     public SeamCarver(Picture pic) {
-        picture = pic;
+        picture = new Picture(pic);
     }
 
     public Picture picture() {
-        return picture;
+        return new Picture(picture);
     }
 
     public int width() {
@@ -20,7 +20,7 @@ public class SeamCarver {
         return picture.height();
     }
 
-    public double energy(int x,int y) {
+    public double energy(int x, int y) {
         if (x < 0 || y < 0 || x >= width() || y >= height()) {
             throw new IndexOutOfBoundsException();
         }
