@@ -1,6 +1,6 @@
-import edu.princeton.cs.algs4.Picture;
 import java.util.Arrays;
-
+import edu.princeton.cs.algs4.Picture;
+import java.awt.Color;
 public class SeamCarver {
     private final Picture picture;
 
@@ -20,7 +20,7 @@ public class SeamCarver {
         return picture.height();
     }
 
-    public double energy(int x, int y) {
+    public double energy(int x,int y) {
         if (x < 0 || y < 0 || x >= width() || y >= height()) {
             throw new IndexOutOfBoundsException();
         }
@@ -32,12 +32,12 @@ public class SeamCarver {
         return cal(x1, y, x2, y) + cal(x, y1, x, y2);
     }
     private int cal(int x1, int y1, int x2, int y2) {
-        int rgb1 = picture.getRGB(x1, y1);
-        int rgb2 = picture.getRGB(x2, y2);
-        int rx2 = ((rgb1 >> 16) - (rgb2 >> 16));
-        int gx2 = (((rgb1 >> 8) & 0xff) - ((rgb2 >> 8) & 0xff));
-        int bx2 = ((rgb1 & 0xff) - (rgb2 & 0xff));
-        return rx2 * rx2 + gx2 * gx2 + bx2 * bx2;
+        Color color1 = picture.get(x1, y1);
+        Color color2 = picture.get(x2, y2);
+        int rx = color1.getRed() - color2.getRed();
+        int gx = color1.getGreen() - color2.getGreen();
+        int bx = color1.getBlue() - color2.getBlue();
+        return rx * rx + gx * gx + bx * bx;
     }
 
 
