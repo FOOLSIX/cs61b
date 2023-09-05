@@ -211,8 +211,8 @@ public class BitSequence implements Serializable {
     public static void main(String[] args) {
         BitSequence bs = new BitSequence();
         bs = bs.appended(1);
-        System.out.println(bs.toString());
-        bs = bs.appended(1);
-        System.out.println(bs.toString());
+        System.out.println(bs.bitAt(0));
+        bs = bs.appended(0);
+        System.out.println(bs.bitAt(1));
     }    
 } 

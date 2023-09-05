@@ -22,16 +22,16 @@ public class ObjectWritingAndReadingDemo {
 
         ObjectReader or = new ObjectReader("somefile.bla");
         /* Read first object from the file. */
-        Object x = or.readObject();
+
         /* Read second object from the file. */
-        Object y = or.readObject();
+
 
         /* We happen to know that that first object is a list of integers,
          * and the second object is a set of strings, so let's cast and
          * print. */
 
-        ArrayList<Integer> xAsList = (ArrayList<Integer>) x;
-        TreeSet<String> yAsSet = (TreeSet<String>) y;
+        ArrayList<Integer> xAsList = (ArrayList<Integer>) or.readObject();;
+        TreeSet<String> yAsSet = (TreeSet<String>) or.readObject();
 
         System.out.println(xAsList);
         System.out.println(yAsSet);
