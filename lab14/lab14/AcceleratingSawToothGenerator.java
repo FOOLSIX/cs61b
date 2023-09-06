@@ -6,7 +6,7 @@ public class AcceleratingSawToothGenerator implements Generator {
     int period;
     int state;
     private final double ACCELERATING_FACTOR;
-    AcceleratingSawToothGenerator(int initialPeriod, double acceleratingFactor) {
+    public AcceleratingSawToothGenerator(int initialPeriod, double acceleratingFactor) {
         period = initialPeriod;
         ACCELERATING_FACTOR = acceleratingFactor;
     }

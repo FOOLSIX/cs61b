@@ -6,7 +6,7 @@ public class StrangeBitwiseGenerator implements Generator {
     int period;
     int state;
 
-    StrangeBitwiseGenerator(int p) {
+    public StrangeBitwiseGenerator(int p) {
         period = p;
     }
 
