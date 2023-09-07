@@ -46,7 +46,7 @@ public class Boggle {
     private static Trie mytrie;
     private static boolean[][] mark;
     private static PriorityQueue<String> ans;
-    private static int M,N;
+    private static int M, N;
     private static HashSet<String> ansSet;
     /**
      * Solves a Boggle puzzle.
