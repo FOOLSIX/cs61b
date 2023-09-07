@@ -39,6 +39,7 @@ public class Boggle {
         }
         In in = new In(dictPath);
         In boardIn = new In(boardFilePath);
+        //read Files
         ans = new PriorityQueue<>(BOGGLE_COMPARATOR);
         ansSet = new HashSet<>();
         mytrie = new Trie();
@@ -46,36 +47,35 @@ public class Boggle {
         M = strings.length;
         N = strings[0].length();
         board = new char[M][];
+        mark = new boolean[M][N];
         for (int i = 0; i < M; ++i) {
             if (strings[i].length() != N) {
                 throw new IllegalArgumentException();
             }
             board[i] = strings[i].toCharArray();
         }
-
+        //initialize variable
         for (String s : in.readAllStrings()) {
             if (s.length() > 2) {
                 mytrie.add(s);
             }
         }
-        mark = new boolean[M][N];
-
+        //build Trie
         for (int i = 0; i < M; ++i) {
             for (int j = 0; j < N; ++j) {
                 dfs(i, j, String.valueOf(board[i][j]));
             }
         }
-
+        //dfs at each starting point
         LinkedList<String> ret = new LinkedList<>();
-
         while (!ans.isEmpty() && ret.size() < k) {
             ret.add(ans.remove());
         }
-
+        //transform answer to list
         return ret;
     }
     private static void dfs(int x, int y, String s) {
-        if (mytrie.containWord(s) && !ansSet.contains(s)) {
+        if (!ansSet.contains(s) && mytrie.containWord(s)) {
             ans.add(s);
             ansSet.add(s);
         }

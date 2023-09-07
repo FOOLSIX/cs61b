@@ -27,7 +27,7 @@ public class TestBoggle {
         }
     }
 
-    @Test
+    @Test(timeout = 300)
     public void testSmallBoard1() {
         List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard.txt");
 //        for (String s : actual) {
