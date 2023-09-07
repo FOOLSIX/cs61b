@@ -20,11 +20,19 @@ public class TestBoggle {
         assertEquals(expected, actual);
     }
     @Test
-    public void testSmallBoard1() {
-        List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard.txt");
+    public void testExampleBoard2() {
+        List<String> actual = Boggle.solve(7, "exampleBoard2.txt");
         for (String s : actual) {
             System.out.print(s + " ");
         }
+    }
+
+    @Test
+    public void testSmallBoard1() {
+        List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard.txt");
+//        for (String s : actual) {
+//            System.out.print(s + " ");
+//        }
 
     }
     @Test

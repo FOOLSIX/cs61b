@@ -42,6 +42,12 @@ public class Boggle {
         }
         return -lengthComparison;
     };
+    private static char[][] board;
+    private static Trie mytrie;
+    private static boolean[][] mark;
+    private static PriorityQueue<String> ans;
+    private static int M,N;
+    private static HashSet<String> ansSet;
     /**
      * Solves a Boggle puzzle.
      * 
@@ -58,30 +64,30 @@ public class Boggle {
         }
         In in = new In(dictPath);
         In boardIn = new In(boardFilePath);
-        PriorityQueue<String> ans = new PriorityQueue<>(BOGGLE_COMPARATOR);
-        HashSet<String> ansSet = new HashSet<>();
-        char[][] board;
+        ans = new PriorityQueue<>(BOGGLE_COMPARATOR);
+        ansSet = new HashSet<>();
+        mytrie = new Trie();
         String[] strings = boardIn.readAllStrings();
-        int m = strings.length;
-        int n = strings[0].length();
-        board = new char[m][];
-        for (int i = 0; i < n; ++i) {
-            if (strings[i].length() != n) {
+        M = strings.length;
+        N = strings[0].length();
+        board = new char[M][];
+        for (int i = 0; i < M; ++i) {
+            if (strings[i].length() != N) {
                 throw new IllegalArgumentException();
             }
             board[i] = strings[i].toCharArray();
         }
-        Trie mytrie = new Trie();
+
         for (String s : in.readAllStrings()) {
             if (s.length() > 2) {
                 mytrie.add(s);
             }
         }
-        boolean[][] mark = new boolean[m][n];
+        mark = new boolean[M][N];
 
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                dfs(i, j, String.valueOf(board[i][j]), board, mytrie, ans, mark);
+        for (int i = 0; i < M; ++i) {
+            for (int j = 0; j < N; ++j) {
+                dfs(i, j, String.valueOf(board[i][j]));
             }
         }
 
@@ -93,10 +99,10 @@ public class Boggle {
 
         return ret;
     }
-    private static void dfs(int x, int y, String s, char[][] board, Trie mytrie,
-                            PriorityQueue<String> ans, boolean[][] mark) {
-        if (mytrie.containWord(s) && !ans.contains(s)) {
+    private static void dfs(int x, int y, String s) {
+        if (mytrie.containWord(s) && !ansSet.contains(s)) {
             ans.add(s);
+            ansSet.add(s);
         }
         mark[x][y] = true;
         for (int i = 0; i < 8; ++i) {
@@ -105,7 +111,7 @@ public class Boggle {
             if (tx >= 0 && ty >= 0 && tx < board.length && ty < board[0].length && !mark[tx][ty]) {
                 String nextString = s + board[tx][ty];
                 if (mytrie.contain(nextString)) {
-                    dfs(tx, ty, nextString, board, mytrie, ans, mark);
+                    dfs(tx, ty, nextString);
                 }
             }
         }
