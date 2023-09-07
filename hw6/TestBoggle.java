@@ -22,6 +22,9 @@ public class TestBoggle {
     @Test
     public void testSmallBoard1() {
         List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard.txt");
+        for (String s : actual) {
+            System.out.print(s + " ");
+        }
 
     }
     @Test

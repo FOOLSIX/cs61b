@@ -73,7 +73,9 @@ public class Boggle {
         }
         Trie mytrie = new Trie();
         for (String s : in.readAllStrings()) {
-            mytrie.add(s);
+            if (s.length() > 2) {
+                mytrie.add(s);
+            }
         }
         boolean[][] mark = new boolean[m][n];
 
@@ -100,14 +102,13 @@ public class Boggle {
         for (int i = 0; i < 8; ++i) {
             int tx = x + NEXT[i][0];
             int ty = y + NEXT[i][1];
-            if (tx >= 0 && ty >= 0 && tx < mark.length && ty < mark[0].length) {
+            if (tx >= 0 && ty >= 0 && tx < board.length && ty < board[0].length && !mark[tx][ty]) {
                 String nextString = s + board[tx][ty];
-                if (!mark[tx][ty] && mytrie.contain(nextString)) {
+                if (mytrie.contain(nextString)) {
                     dfs(tx, ty, nextString, board, mytrie, ans, mark);
                 }
             }
         }
         mark[x][y] = false;
     }
-
 }
