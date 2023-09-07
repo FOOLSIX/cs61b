@@ -8,31 +8,6 @@ public class Boggle {
     
     // File path of dictionary file
     static String dictPath = "words.txt";
-    private static class SearchNode {
-        int x;
-        int y;
-        String val;
-        boolean[][] mark;
-        public SearchNode(String str, int posX, int posY, boolean[][] mk) {
-            val = str;
-            x = posX;
-            y = posY;
-            mark = new boolean[mk.length][mk[0].length];
-            for (int i = 0; i < mk.length; ++i) {
-                System.arraycopy(mk[i], 0, mark[i], 0, mk[0].length);
-            }
-        }
-        public SearchNode(SearchNode node) {
-            val = node.val;
-            x = node.x;
-            y = node.y;
-            mark = new boolean[node.mark.length][node.mark[0].length];
-            for (int i = 0; i < node.mark.length; ++i) {
-                System.arraycopy(node.mark[i], 0, mark[i], 0, node.mark[0].length);
-            }
-        }
-
-    }
     private static final int[][] NEXT = {{0, 1}, {1, 0}, {0, -1}, {-1, 0},
                                          {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
     private static final Comparator<String> BOGGLE_COMPARATOR = (str1, str2) -> {
@@ -108,7 +83,7 @@ public class Boggle {
         for (int i = 0; i < 8; ++i) {
             int tx = x + NEXT[i][0];
             int ty = y + NEXT[i][1];
-            if (tx >= 0 && ty >= 0 && tx < board.length && ty < board[0].length && !mark[tx][ty]) {
+            if (tx >= 0 && ty >= 0 && tx < M && ty < N && !mark[tx][ty]) {
                 String nextString = s + board[tx][ty];
                 if (mytrie.contain(nextString)) {
                     dfs(tx, ty, nextString);
