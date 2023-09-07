@@ -75,43 +75,14 @@ public class Boggle {
         for (String s : in.readAllStrings()) {
             mytrie.add(s);
         }
-        PriorityQueue<SearchNode> pq =
-                new PriorityQueue<>(Comparator.comparingInt(node -> -node.val.length()));
-        //initialize
+        boolean[][] mark = new boolean[m][n];
 
-        boolean[][] mk = new boolean[m][n];
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                String string = String.valueOf(board[i][j]);
-                if (mytrie.contain(string)) {
-                    mk[i][j] = true;
-                    pq.add(new SearchNode(string, i, j, mk));
-                    mk[i][j] = false;
-                }
+                dfs(i, j, String.valueOf(board[i][j]), board, mytrie, ans, mark);
             }
         }
 
-        while (!pq.isEmpty()) {
-            SearchNode node = pq.remove();
-
-            if (mytrie.containWord(node.val) && !ansSet.contains(node.val)) {
-                ans.add(node.val);
-                ansSet.add(node.val);
-            }
-
-            for (int i = 0; i < 8; ++i) {
-                int tx = node.x + NEXT[i][0];
-                int ty = node.y + NEXT[i][1];
-                if (tx >= 0 && ty >= 0 && tx < m && ty < n) {
-                    String nextString = node.val + board[tx][ty];
-                    if (!node.mark[tx][ty] && mytrie.contain(nextString)) {
-                        SearchNode nextNode = new SearchNode(nextString, tx, ty, node.mark);
-                        nextNode.mark[tx][ty] = true;
-                        pq.add(nextNode);
-                    }
-                }
-            }
-        }
         LinkedList<String> ret = new LinkedList<>();
 
         while (!ans.isEmpty() && ret.size() < k) {
@@ -120,4 +91,23 @@ public class Boggle {
 
         return ret;
     }
+    private static void dfs(int x, int y, String s, char[][] board, Trie mytrie,
+                            PriorityQueue<String> ans, boolean[][] mark) {
+        if (mytrie.containWord(s) && !ans.contains(s)) {
+            ans.add(s);
+        }
+        mark[x][y] = true;
+        for (int i = 0; i < 8; ++i) {
+            int tx = x + NEXT[i][0];
+            int ty = y + NEXT[i][1];
+            if (tx >= 0 && ty >= 0 && tx < mark.length && ty < mark[0].length) {
+                String nextString = s + board[tx][ty];
+                if (!mark[tx][ty] && mytrie.contain(nextString)) {
+                    dfs(tx, ty, nextString, board, mytrie, ans, mark);
+                }
+            }
+        }
+        mark[x][y] = false;
+    }
+
 }

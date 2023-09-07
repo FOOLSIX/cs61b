@@ -24,6 +24,10 @@ public class Trie {
     }
 
     public boolean contain(String s) {
+        if (s == null) {
+            return false;
+        }
+
         TrieNode curNode = root;
         for (char c : s.toCharArray()) {
             curNode = curNode.next.get(c);
@@ -35,6 +39,9 @@ public class Trie {
     }
 
     public boolean containWord(String s) {
+        if (s == null) {
+            return false;
+        }
         TrieNode curNode = root;
         for (char c : s.toCharArray()) {
             curNode = curNode.next.get(c);

@@ -21,12 +21,11 @@ public class TestBoggle {
     }
     @Test
     public void testSmallBoard1() {
-        List<String> actual = Boggle.solve(7, "smallBoard.txt");
+        List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard.txt");
 
     }
     @Test
     public void testSmallBoard2() {
-        List<String> actual = Boggle.solve(7, "smallBoard2.txt");
-
+        List<String> actual = Boggle.solve(Integer.MAX_VALUE, "smallBoard2.txt");
     }
 }
